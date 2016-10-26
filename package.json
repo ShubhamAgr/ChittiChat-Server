@@ -1,0 +1,37 @@
+{
+  "name": "chittichat",
+  "version": "0.0.1",
+  "description": "server side application for android application chittichat",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ShubhamAgr/Chittichat-main-server.git"
+  },
+  "dependencies": {
+    "bcryptjs": "latest",
+    "body-parser": "~1.15.1",
+    "cookie-parser": "~1.4.3",
+    "debug": "~2.2.0",
+    "ejs": "~2.4.1",
+    "express": "~4.13.4",
+    "jsonwebtoken": "^7.1.6",
+    "mongodb": "latest",
+    "mongoose": "latest",
+    "morgan": "~1.7.0",
+    "multiparty":"latest",
+    "serve-favicon": "~2.3.0",
+    "socket.io": "^1.4.8",
+    "socketio-wildcard": "^0.3.0",
+    "unirest": "^0.5.0"
+  },
+  "author": "Shubham Agrawal",
+  "license": "UNLICENSED",
+  "private": "true",
+  "bugs": {
+    "url": "https://github.com/ShubhamAgr/Chittichat-main-server/issues"
+  },
+  "homepage": "https://github.com/ShubhamAgr/Chittichat-main-server#readme"
+}
