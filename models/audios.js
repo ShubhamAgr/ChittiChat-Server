@@ -11,6 +11,10 @@ var audioSchema = new schema({
   upvotedBy:[String],
   shares:{types:String},//numberoftimes
   sharedBy:[String],
+  tags:[{
+    content_name:{type:String},
+    quantity:{type:String}
+  }],
   reportAbused:{type:Boolean,default:false}
 },{collection:"audios"});
 module.exports = mongoose.model("audio",audioSchema);

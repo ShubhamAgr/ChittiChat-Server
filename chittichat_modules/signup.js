@@ -9,11 +9,8 @@ exports.newUser = function(req,IsByFacebook,callback){
     newUser = new userModel({
       _id:mongoose.Types.ObjectId(id),
       facebook_id:req.body.facebook_id,
-      email:req.body.email,
       firstName:req.body.firstName,
-      middleName:req.body.middleName,
-      lastName:req.body.lastName,
-      userName:req.body.username
+      lastName:req.body.lastName
     },{collection:'user'})
   }else{
     const salt = bcrypt.genSaltSync(10);//slow the process so change it to async...
@@ -23,8 +20,8 @@ exports.newUser = function(req,IsByFacebook,callback){
       email:req.body.email,
       username:req.body.username,
       password:hash,
-      firstName:req.body.firstName,
-      lastName:req.body.lastName,
+      // firstName:req.body.firstName,
+      // lastName:req.body.lastName,
     },{collection:'user'});
   }
   newUser.save(function(err,newUser){

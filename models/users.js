@@ -8,7 +8,6 @@ var userSchema = new schema({
   password :{type:String,default:"Invalid"},
   email:{type:String,default:null},
   firstName:{type:String,default:null},
-  middleName:{type:String,default:null},
   lastName:{type:String,default:null},
   yearOfBirth:{type:String,default:null},
   chittichat_coins:{type:String,default:null},
@@ -17,6 +16,10 @@ var userSchema = new schema({
   profile_Pic_url :{type:String,default:"default"},
   status : {type:String,default:"chitti chitti chat chat"},
   interests : [String],
+  groups:[{
+    _id:id,
+    role:{type:String}//follower,admin, member.
+  }],
   groups_Followed:[String],
   groups_Admin:[String],
   groups_member:[String],
@@ -33,6 +36,10 @@ var userSchema = new schema({
   myimages:[String],
   myvideos:[String],
   myaudio:[String],
+  knowledge_Map:[{
+    identity:[String],
+    level_of_understanding:[String]
+  }],
   pendingRequest:[String],
   accout_createdOn:{type:Date,default:Date.now()}
 

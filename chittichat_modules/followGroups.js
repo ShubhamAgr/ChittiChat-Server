@@ -3,7 +3,7 @@ var userModel = require('../models/users');
 var groupModel = require('../models/groups');
 
 exports.followGroups = function(userId,groupId,socket,callback){
-   userModel.findByIdAndUpdate(userId,{$addToSet:{"groups_Followed":groupId}},{safe:true,upsert:true},function(err){
+   userModel.findByIdAndUpdate(userId,{$addToSet:{"groups":{_id:mongoose.Types.ObjectId(groupId),"role":"follower"}}},{safe:true,upsert:true},function(err){
      if(err){
        callback({"message":"error"});
      }else{
@@ -20,16 +20,16 @@ exports.followGroups = function(userId,groupId,socket,callback){
 }
 
 exports.unfollowGroups = function(req,socket,callback){
-  userModel.findByIdAndUpdate(userId,{$pull:{"groups_Followed":groupId}},{safe:true,upsert:true},function(err){
+  userModel.findByIdAndUpdate(userId,{$pull:{"groups":{_id:mongoose.Types.ObjectId(groupId)}}},{safe:true,upsert:true},function(err){
     if(err){
-      callback({"message":"error"});
+      callback({"message":"unsuccessful"});
     }else{
-      groupModel.findByIdAndUpdate(groupId,{$pull:{"followers":userId}},{safe:true,upsert:true},function(err){
+      groupModel.findByIdAndUpdate(groupId,{$pull:{"followers":req.body.userId}},{safe:true,upsert:true},function(err){
         if(err){
-          callback({"message":"error"});
+          callback({"message":"unsuccessful"});
         }else{
           socket.emit("unfollower",{"groupId":groupId,"userId":userId});
-          callback({"message":"true"});
+          callback({"message":"successful"});
         }
       });
     }

@@ -12,6 +12,10 @@ var articleSchema = new schema(){
   upvotedBy:[String],
   shares:{type:String},//numberoftimes
   sharedBy:[String],
+  tags:[{
+    content_name:{type:String},
+    quantity:{type:String}
+  }],
   reportAbused:{type:Boolean,default:false}
 },collection:"articles");
 module.exports = mongoose.model("article",articleSchema);

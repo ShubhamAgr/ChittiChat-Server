@@ -6,7 +6,7 @@ exports.newgroup = function(req,callback){
   var newGroup = new groupModel({
     _id:mongoose.Types.ObjectId(id),
     group_admin:req.body.admin,//can give problem
-    group_motivation:req.body.motivation,
+    group_about:req.body.motivation,
     group_category:req.body.group_category,
     knock_knock_question:req.body.knock_knock_question
   },{collection:'groups'});
@@ -14,7 +14,14 @@ exports.newgroup = function(req,callback){
     if(err){
       callback({"message":"unsuccessful"});
     }else{
-      callback({"message":"successful"});
-    }
-  });
-}
+      //data to add the groups in the account of administrator or creater...
+      userModel.findByIdAndUpdate(userId,{$addToSet:{"groups":{_id:mongoose.Types.ObjectId(groupId),"role":"administrator"}}},{safe:true,upsert:true},function(err){
+        if(err){
+          callback({"message":"unsuccessful"});
+        }else{
+          callback({"message":"successful"});
+        }
+        });
+      }
+    });
+  }

@@ -5,8 +5,8 @@ var id = mongoose.Schema.Types.ObjectId;
 var groupSchema = new schema({
   _id:id,
   group_admin:[String],
-  group_pic_url:{type:String},
-  group_motivation:{type:String},
+  group_pic_url:{type:String,default:"default"},
+  group_about:{type:String},
   group_category:{type:String},
   group_topics:[String],
   followers:[String],

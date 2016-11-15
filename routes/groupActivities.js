@@ -7,13 +7,22 @@ module.exports = function(app,io,socketMap){
         res.status(200).json(response);
       });
   });
+  app.post("/newRequest",function(req,res){
+
+  });
+  app.get("/followGroup/:token/:groupId",function(req,res){
+    var token =  req.params.token;
+  });
+  app.get("/unfollowGroup/:token/:groupId",function(req,res){
+
+  });
+
   app.get("/groups/:token",function(req,res){
 
   });
   app.get("/members/:token/:groupId",function(req,res){
 
   });
-
   app.get("/join/:token/:groupId",function(req,res){
 
   });

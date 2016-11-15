@@ -22,13 +22,6 @@ exports.updateUserDetail = function(req,id,callback){
         }
       });
   });
-  eventEmitter.on("updateMiddleName",function(){
-     userModel.findOneAndUpdate({"_id":id},{"middleName":req.body.middleName},{safe:true,upsert:true},function(err){
-       if(err){
-         throw(err);
-       }
-     });
-  });
   eventEmitter.on("updateLastName",function(){
       userModel.findOneAndUpdate({"_id":id},{"lastName":req.body.lastName},{safe:true,upsert:true},function(err){
         if(err){
