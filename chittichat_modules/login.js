@@ -12,7 +12,7 @@ exports.loginWithEmail = function(req,callback){
       bcrypt.compare(req.body.password,user[0].toObject().password,function(err,res){
         if(res == true){
           var token = jwt.sign({foo:user[0].toObject()._id},secret);
-            loginDetails.findOneAndUpdate({'_id':foo:user[0].toObject()._id},{'loginWithChittiChat':{"isLogin":true,"token":token,"timestamp":Date.now()}},{safe:true,upsert:true},function(err){
+            loginDetails.findOneAndUpdate({"_id":user[0].toObject()._id},{'loginWithChittiChat':{"isLogin":true,"token":token,"timestamp":Date.now()}},{safe:true,upsert:true},function(err){
               if(err){
                 callback({"message":"something went wrong"});
               }else{
@@ -35,7 +35,7 @@ exports.loginWithUsername = function(req,callback){
       bcrypt.compare(req.body.password,user[0].toObject().password,function(err,res){
         if(res == true){
           var token = jwt.sign({foo:user[0].toObject()._id},secret);
-          loginDetails.findOneAndUpdate({'_id':foo:user[0].toObject()._id},{'loginWithChittiChat':{"isLogin":true,"token":token,"timestamp":Date.now()}},{safe:true,upsert:true},function(err){
+          loginDetails.findOneAndUpdate({'_id':user[0].toObject()._id},{'loginWithChittiChat':{"isLogin":true,"token":token,"timestamp":Date.now()}},{safe:true,upsert:true},function(err){
             if(err){
               callback({"message":"something went wrong"});
             }else{
@@ -56,7 +56,7 @@ exports.loginWithFacebook = function(req,callback) {
     if(user.length != 0) {
           var token = jwt.sign({foo:user[0].toObject()._id},secret);
           //code for adding data to the login detail....
-          loginDetails.findOneAndUpdate({'_id':foo:user[0].toObject()._id},{'loginWithFacebook':{"isLogin":true,"fb_token":req.body.fb_token,"token":token,"timestamp":Date.now()}},{safe:true,upsert:true},function(err){
+          loginDetails.findOneAndUpdate({'_id':user[0].toObject()._id},{'loginWithFacebook':{"isLogin":true,"fb_token":req.body.fb_token,"token":token,"timestamp":Date.now()}},{safe:true,upsert:true},function(err){
             if(err){
               callback({"message":"something went wrong"});
             }else{

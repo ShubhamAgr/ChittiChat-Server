@@ -21,7 +21,7 @@ module.exports = function(app,io,socketMap){
     });
 
     app.post('/signupWithFacebook',function(req,res){
-      signup.newUser(req,true,callback(response){
+      signup.newUser(req,true,function(response){
         if(response == "successful"){
           login.loginWithFacebook(req,function(found){
               res.status(200).json(found);

@@ -1,5 +1,5 @@
 var mongoose = require('mongoose');
-var user = require('../models.users');
+var user = require('../models/users');
 exports.isUserEmailExists = function(email,callback){
   user.find({'email':email},function(err,user){
     if(user.length != 0){

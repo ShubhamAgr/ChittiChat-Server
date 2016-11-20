@@ -1,6 +1,6 @@
 var mongoose  = require('mongoose');
 var schema = mongoose.Schema;
-var id = mongoose.Scheama.Types.ObjectId;
+var id = mongoose.Schema.Types.ObjectId;
 var loginDetailSchema = new schema ({
   _id:id,
   loginWithfacebook:{

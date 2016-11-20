@@ -1,4 +1,4 @@
-var userActivities = require('./routes/login');
+var userActivities = require('./routes/userActivities');
 
 module.exports = function(app,io,socketMap) {
   userActivities(app,io,socketMap);
