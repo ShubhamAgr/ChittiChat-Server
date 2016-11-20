@@ -20,6 +20,7 @@ var userSchema = new schema({
     _id:id,
     role:{type:String}//follower,admin, member.
   }],
+  group_invites:[String],
   groups_Followed:[String],
   groups_Admin:[String],
   groups_member:[String],
@@ -35,7 +36,7 @@ var userSchema = new schema({
   myarticle:[String],
   myimages:[String],
   myvideos:[String],
-  myaudio:[String],
+  myaudios:[String],
   knowledge_Map:[{
     identity:[String],
     level_of_understanding:[String]

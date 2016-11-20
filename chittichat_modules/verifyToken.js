@@ -7,12 +7,13 @@ exports.verify = function(token,callback) {
     let userId = jwt.verify(token,secretKey).foo;//checkout the foo...
     userModel.find({_id:userId},function(err,user){
       if(err){
-        callback("message":"error");
+        callback("error");
+        //assert true;
       }
       else if(user[0].length != 0){
-        callback("message",userId);
+        callback(userId);
       }else{
-        callback("message":"false");
+        callback("false");
       }
     });
   });
