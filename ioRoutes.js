@@ -9,7 +9,7 @@ module.exports = function(io,socketMap){
     roomActivity(io,socket,socketMap);
 
     socket.on('Auth',function(body){
-      let userId = body.userId;
+      var userId = body.userId;
       socketMap.set(userId,socket);
 
     });

@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
 var schema = mongoose.Schema;
 var id = mongoose.Schema.ObjectId;
-var pictureSchema = new schema(){
+var pictureSchema = new schema({
   _id:id,
   topic_id:{type:String},
   published_timestamp:{type:String,default:Date.now()},

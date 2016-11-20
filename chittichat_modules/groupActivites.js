@@ -2,12 +2,12 @@ var mongoose = require('mongoose');
 var userModel = require('../models/users');
 var groupModel = require('../models/groups');
 
-exports.newgroup = function(req,callback){
-  var userId = //get from the token....
+exports.newgroup = function(userId,req,callback){
+  var userId = userId;
   var id = new mongoose.Types.ObjectId;
   var newGroup = new groupModel({
     _id:mongoose.Types.ObjectId(id),
-    group_name:req.body.group_name;
+    group_name:req.body.group_name,
     group_admin:userId,//can give problem
     group_about:req.body.group_introduction,
     group_category:req.body.group_category,
@@ -54,7 +54,7 @@ exports.changeGroupName = function(){
 
 }
 exports.addNewRequest = function(userId,groupId,knock_knock_answer,callback){
-    let newRequests = {"by":userId,"knock_knock_answer":knock_knock_answer};
+    var newRequests = {"by":userId,"knock_knock_answer":knock_knock_answer};
     userModel.findOneAndUpdate({'_id':groupId},{$addToSet:{"pending_join_requests":newRequests}},{safe:true,upsert:true},function(err,groups){
     if(err){
       callback({"message":"unsuccessful"});

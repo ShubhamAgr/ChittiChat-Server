@@ -1,10 +1,9 @@
-var createTopic = require('../chittichat_modules/createTopic');
-var postContent = require('../chittichat_modules/postContent');
+var topicActivity = require('../chittichat_modules/topicActivites');
 exports.module = function(app,io,socketMap){
   app.post("/newTopic",function(req,res){
-      createTopic.newTopic(req,socket,function(response){
-        res.status(200).json(response);
-      });
+      // createTopic.newTopic(req,socket,function(response){
+      //   res.status(200).json(response);
+      // });
   });
   app.get("/allTopics/:token/:groupId",function(req,res){
 

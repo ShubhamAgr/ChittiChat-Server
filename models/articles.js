@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
 var schema = mongoose.Schema;
 var id = mongoose.Schema.ObjectId;
-var articleSchema = new schema(){
+var articleSchema = new schema({
   _id:id,
   topic_id:{type:String},
   published_timestamp:{type:String,default:Date.now()},
@@ -17,5 +17,5 @@ var articleSchema = new schema(){
     quantity:{type:String}
   }],
   reportAbused:{type:Boolean,default:false}
-},collection:"articles");
+},{collection:"articles"});
 module.exports = mongoose.model("article",articleSchema);
