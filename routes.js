@@ -4,6 +4,7 @@ var topicActivites = require('./routes/topicActivities')
 var search = require('./routes/search');
 module.exports = function(app,io,db,socketMap) {
   userActivities(app,io,socketMap);
+  groupActivites(app,io,socketMap);
   app.get('/',function(req,res){
     res.status(200).send("This request is for Home Page");
   });

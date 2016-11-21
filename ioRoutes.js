@@ -1,7 +1,8 @@
-const roomActivity = require('./routes/roomActivites');
-const middleware = require('socketio-wildcard')();
+var roomActivity = require('./routes/roomActivites');
+var middleware = require('socketio-wildcard')();
+var verifyToken = require('./chittichat_modules/verifyToken');
 
-module.exports = function(io,socketMap){
+module.exports = function(app,io,socketMap){
   io.use(middleware);
   io.on('connection',function(socket){
     socket.emit('true');
@@ -9,29 +10,38 @@ module.exports = function(io,socketMap){
     roomActivity(io,socket,socketMap);
 
     socket.on('Auth',function(body){
-      var userId = body.userId;
-      socketMap.set(userId,socket);
-
+      verifyToken.verify(body.token,function(found){
+      if(found != "false"){
+        socketMap.set(userId,socket);
+        socket.emit('IsAuthorized',{"Response":true});
+      }else{
+        socket.emit('IsAuthorized',{"Response":false});
+      }
+    });
     });
 
     socket.on('onTyping',function(body){
-//
+        socket.to(body.groupId).emit({"Response":body.username+"is typing..."});
     });
 
     socket.on('stopTyping',function(body){
-//
+         socket.to(body.groupId).emit({"Reponse":true});
     });
 
     socket.on('*', function(body){
-      socket.emit("error",{"message","404"});
+      socket.emit("error",{"Response":"404"});
     });
 
     socket.on('disconnect',function(body){
-      //get token...
-      //fetch objectId from token
-      //delete object..
-      let userId = body.UserId;
-      socketMap.delete(userId);
-    })
+      verifyToken.verify(body.token,function(found){
+      if(found != "false"){
+        socketMap.delete(found);
+        socket.emit('IsDisconnected',{"Response":true});
+      }else{
+        socket.emit('IsDisconnected',{"Response":true});
+      }
+      });
+    });
+
   });
 }

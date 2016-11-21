@@ -3,7 +3,6 @@ var userModel = require('../models/users');
 var groupModel = require('../models/groups');
 
 exports.newgroup = function(userId,req,callback){
-  var userId = userId;
   var id = new mongoose.Types.ObjectId;
   var newGroup = new groupModel({
     _id:mongoose.Types.ObjectId(id),
@@ -18,7 +17,7 @@ exports.newgroup = function(userId,req,callback){
       callback({"message":"unsuccessful"});
     }else{
       //data to add the groups in the account of administrator or creater...
-      userModel.findByIdAndUpdate(userId,{$addToSet:{"groups":{_id:mongoose.Types.ObjectId(groupId),"role":"administrator"}}},{safe:true,upsert:true},function(err){
+      userModel.findByIdAndUpdate(userId,{$addToSet:{"groups":{_id:mongoose.Types.ObjectId(id),"role":"administrator"}}},{safe:true,upsert:true},function(err){
         if(err){
           callback({"message":"unsuccessful"});
         }else{
@@ -28,7 +27,17 @@ exports.newgroup = function(userId,req,callback){
       }
     });
   }
-
+exports.groupDetail = function(groupId,callback){
+  groupModel.find({"_id":groupId},function(err,group){
+    var response = new Object();
+    response._id = group[0].toObject()._id;
+    response.name = group[0].toObject().group_name;
+    response.pic_url = group[0].toObject().group_profilePicture;
+    response.category = group[0].toObject().group_category;
+    response.about = group[0].toObject().group_about;
+    callback(response);
+  });
+}
 exports.addMember = function(){
 
 }
@@ -60,6 +69,7 @@ exports.addNewRequest = function(userId,groupId,knock_knock_answer,callback){
       callback({"message":"unsuccessful"});
 
     } else {
+      //find all the admin and for each socket.emit the new join request ...
       callback({"message":"successful"});
     }
   });

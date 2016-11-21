@@ -3,7 +3,7 @@ var userModel = require('../models/users');
 var loginDetails = require('../models/loginDetails')
 var jwt = require('jsonwebtoken');
 var bcrypt = require('bcryptjs');
-var secret = "XYZ";
+var secret = "abcdefghijklmnopqr/123@!@#$%";
 //pending to write the add to loginDetails... in each block....
 
 exports.loginWithEmail = function(req,callback){

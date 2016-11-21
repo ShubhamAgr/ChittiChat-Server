@@ -24,7 +24,7 @@ app.use('/videos', express.static(__dirname + '/static-Files/videos'));
 app.use('/audios',express.static(__dirname+'static-Files/audios'));
 
  require('./routes.js')(app,io,socketMap);
-
+ require('./ioRoutes.js')(app,io,socketMap);
 app.listen(3000,function(){
   console.log("Chittchat Server is running at port:\t 3000");
 });
