@@ -1,30 +1,54 @@
+var verifyToken = require('../chittichat_modules/verifyToken');
 var topicActivity = require('../chittichat_modules/topicActivites');
-exports.module = function(app,io,socketMap){
+module.exports = function(app,io,socketMap){
   app.post("/newTopic",function(req,res){
-      // createTopic.newTopic(req,socket,function(response){
-      //   res.status(200).json(response);
-      // });
+    console.log(req.body.token);
+    verifyToken.verify(req.body.token,function(found) {
+
+    if(found != "false") {
+      topicActivity.newTopic(found,req,socketMap,function(response){
+          res.status(200).json(response);
+        });
+      }
+    });
   });
   app.get("/allTopics/:token/:groupId",function(req,res){
-
+      verifyToken.verify(req.params.token,function(found){
+        if(found != "false") {
+          topicActivity.getTopics(groupId,function(response){
+            res.status(200).json(response);
+          });
+        }
+      });
+      res.status(200).end();
   });
   app.get("/topicsWithArticle/:token/:groupId",function(req,res){
-
+      verifyToken.verify(req.params.token,function(found){
+        if(found != "false"){
+        res.status(200).json(response);
+        }
+      });
   });
   app.get("/articles/:token/:topicId/:range",function(req,res){
 
   });
   app.post("/article",function(req,res){
-
+      verifyToken.verify(req.body.token,function(found) {
+        if(found != false){
+            topicActivity.newArticle(found,req.body.topicId,req.body.topic_content,socketMap,function(response){
+              res.status(200).json(response);
+            });
+        }
+      });
   });
   app.post("/image",function(req,res){
-
+        res.status(200).end();
   });
   app.post("/audio",function(req,res){
-
+        res.status(200).end();
   });
   app.post("/video",function(req,res){
-
+        res.status(200).end();
   });
 
 }

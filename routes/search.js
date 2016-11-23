@@ -1,15 +1,24 @@
 
-module.exports = function(app,db){
+module.exports = function(MongoClient,url,app){
 
 app.post("/search",function(req,res){
-  db.ensureIndex('users',{"$**":"text"},function(err,indexname){
-    assert.equal(null,err);
+  MongoClient.connect(url,function(err,db){
+  db.ensureIndex('articles',{"$**":"text"},function(err,indexname){
+    // assert.equal(null,err);
     console.log(indexname);
-    db.collection('users').find({"$text":{"$search":req.body.query}}).toArray(function(err,items){
-      console.log(items);
+    // db.collection('users').find({"$text":{"$search":req.body.query}}).toArray(function(err,items){
+    //   res.status(200).json(items);
+    //   db.close();
+    // });
+    db.collection('articles').find({"$text":{"$search":req.body.query}}).toArray(function(err,items){
+
+      res.status(200).json(items);
+      db.close();
     });
   });
 });
+});
+}
 
   //   app.post("/search",function(req,res){
 //     db.collection('users').find({
@@ -36,4 +45,3 @@ app.post("/search",function(req,res){
 //     // res.send(pagelist(items));
 //   })
 // });
-}

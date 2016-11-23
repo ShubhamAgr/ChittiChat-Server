@@ -4,7 +4,7 @@ var id = mongoose.Schema.ObjectId;
 var topicSchema = new schema({
   _id:id,
   group_id:{type:String},
-  topic_about:{type:String},
+  topic_title:{type:String},
   topic_detail:{type:String},
   createdBy:{type:String},
   created_timestamp:{type:String,default:Date.now()},

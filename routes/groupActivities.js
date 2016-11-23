@@ -10,7 +10,7 @@ module.exports = function(app,io,socketMap){
           res.status(200).json(response);
         });
       }
-      })
+    });
 
   });
   app.post('/newRequest',function(req,res){

@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
-var groupModel = require('../models/groups');
 var fs = require('fs');
+var groupModel = require('../models/groups');
+var userModel = require('../models/users');
 var articleModel = require('../models/articles');
 var imageModel = require('../models/pictures');
 var audioModel = require('../models/audios');
@@ -8,24 +9,24 @@ var videoModel = require('../models/videos')
 var topicModel = require('../models/topics');
 var multiparty = require('multiparty');
 var util = require('util');
-exports.newTopic = function(req,socket,callback){
+exports.newTopic = function(userId,req,socket,callback){
   var id =new mongoose.Types.ObjectId;
   var newTopic = new topicModel({
     _id:mongoose.Types.ObjectId(id),
-    groupId:req.body.groupId,
-    topic_about:req.body.topic_about,
-    topic_Detail:req.body.topic_Detail,
-    createdBy:req.body.userId,
+    group_id:req.body.group_id,
+    topic_title:req.body.topic_title,
+    topic_detail:req.body.topic_description,
+    createdBy:userId,
   },{collection:'topics'});
   newTopic.save(function(err,newTopic){
     if(err){
       callback({"message":"unsuccessful"});
     }else{
-      groupModel.findByIdAndUpdate(req.body.groupId,{$addToSet:{"group_topics":newTopic[0].toObject()._id}},{safe:true,upsert:true},function(err){
+      groupModel.findByIdAndUpdate(req.body.group_id,{$addToSet:{"group_topics":id}},{safe:true,upsert:true},function(err){
       if(err){
         callback({"message":"unsuccessful"});
       }else{
-        socket.to(req.body.room).emit("newTopic",{"topicId":id,"userId":req.body.userId});
+        // socket.to(req.body.room).emit("newTopic",{"topicId":id,"userId":req.body.userId});
         callback({"message":"successful"});
       }
     });
@@ -33,24 +34,31 @@ exports.newTopic = function(req,socket,callback){
   });
 }
 
-exports.newArticle = function(req,io,callback){
+exports.newArticle = function(userId,topicId,topic_content,socket,callback){
  var id = new mongoose.Types.ObjectId;
  var newArticle = new articleModel({
     _id:mongoose.Types.ObjectId(id),
-    topic_id:req.body.topicId,
-    publishedBy:req.body.userId,
-    article_content:req.body.content
-  });
+    topic_id:topicId,
+    publishedBy:userId,
+    article_content:topic_content
+  },{collection:'articles'});
   newArticle.save(function(err,newArticle){
     if(err){
-      callback(false);
+      callback({"message":"unsuccessful"});
     }else{
-      topicModel.findByIdAndUpdate(req.body.topicId,{$addToSet:{"articles":newArticle[0].toObject()._id}},{safe:true,upsert:true},function(err){
+      topicModel.findByIdAndUpdate(topicId,{$addToSet:{"articles":id}},{safe:true,upsert:true},function(err){
       if(err){
-        callback(false);
+        callback({"message":"unsuccessful"});
       }else{
-        io.to(req.body.room).emit('newarticle',{"articleId":newArticle[0].toObject()._id});
-        callback(true);
+        // io.to(req.body.room).emit('newarticle',{"articleId":newArticle[0].toObject()._id});
+        userModel.findByIdAndUpdate(userId,{$addToSet:{"myarticles":id},safe:true,upsert:true},function(err){
+          if(err){
+            callback({"message":"unsuccessful"});
+          }else{
+              callback({"message":"successful"});
+          }
+        });
+
       }
     });
     }
@@ -161,4 +169,13 @@ exports.newVideo = function(req,io,callback){
         });
     }
   });
+}
+exports.getTopics = function(){
+
+}
+exports.getTopicsWithArticle = function(){
+
+}
+exports.articles = function(topicId,range,callback){
+
 }

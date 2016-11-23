@@ -24,6 +24,7 @@ var userSchema = new schema({
   groups_Followed:[String],
   groups_Admin:[String],
   groups_member:[String],
+// to fetch the notification
   newTopic:[{
     groupId:{type:String},
     topicId:{type:String}
@@ -33,7 +34,7 @@ var userSchema = new schema({
       topicId:{type:String},
       ArticleId:{type:String},
   }],
-  myarticle:[String],
+  myarticles:[String],
   myimages:[String],
   myvideos:[String],
   myaudios:[String],
