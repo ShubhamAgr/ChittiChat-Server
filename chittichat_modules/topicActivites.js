@@ -170,8 +170,11 @@ exports.newVideo = function(req,io,callback){
     }
   });
 }
-exports.getTopics = function(){
-
+exports.getTopics = function(groupId,callback){
+   var query = topicModel.find({'group_id':groupId}).select('topic_title _id topic_detail');
+   query.exec(function(err,topics){
+     callback(topics);
+   });
 }
 exports.getTopicsWithArticle = function(){
 

@@ -4,7 +4,7 @@ var id = mongoose.Schema.ObjectId;
 var articleSchema = new schema({
   _id:id,
   topic_id:{type:String},
-  published_timestamp:{type:String,default:Date.now()},
+  createdOn:{type:Date,default:Date.now()},
   publishedBy:{type:String},
   article_content:{type:String,default:null},
   article_image_url:{type:String,default:null},

@@ -4,8 +4,7 @@ module.exports = function(app,io,socketMap){
   app.post("/newTopic",function(req,res){
     console.log(req.body.token);
     verifyToken.verify(req.body.token,function(found) {
-
-    if(found != "false") {
+     if(found != "false") {
       topicActivity.newTopic(found,req,socketMap,function(response){
           res.status(200).json(response);
         });
@@ -15,12 +14,11 @@ module.exports = function(app,io,socketMap){
   app.get("/allTopics/:token/:groupId",function(req,res){
       verifyToken.verify(req.params.token,function(found){
         if(found != "false") {
-          topicActivity.getTopics(groupId,function(response){
+          topicActivity.getTopics(req.params.groupId,function(response){
             res.status(200).json(response);
           });
         }
       });
-      res.status(200).end();
   });
   app.get("/topicsWithArticle/:token/:groupId",function(req,res){
       verifyToken.verify(req.params.token,function(found){
@@ -30,7 +28,7 @@ module.exports = function(app,io,socketMap){
       });
   });
   app.get("/articles/:token/:topicId/:range",function(req,res){
-
+      res.status(200).json({"aa":"aa"});
   });
   app.post("/article",function(req,res){
       verifyToken.verify(req.body.token,function(found) {
