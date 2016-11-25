@@ -40,13 +40,15 @@ exports.newArticle = function(userId,topicId,topic_content,socket,callback){
     _id:mongoose.Types.ObjectId(id),
     topic_id:topicId,
     publishedBy:userId,
-    article_content:topic_content
+    createdOn:Date.now(),
+    article_content:topic_content,
+    content_type:"texts"
   },{collection:'articles'});
   newArticle.save(function(err,newArticle){
     if(err){
       callback({"message":"unsuccessful"});
     }else{
-      topicModel.findByIdAndUpdate(topicId,{$addToSet:{"articles":id}},{safe:true,upsert:true},function(err){
+      topicModel.findByIdAndUpdate(topicId,{$addToSet:{"articles":{'_id':mongoose.Types.ObjectId(id)}}},{safe:true,upsert:true},function(err){
       if(err){
         callback({"message":"unsuccessful"});
       }else{
@@ -179,6 +181,13 @@ exports.getTopics = function(groupId,callback){
 exports.getTopicsWithArticle = function(){
 
 }
-exports.articles = function(topicId,range,callback){
-
+exports.getArticles = function(topicId,range,callback){
+  //range will be in format of 10_12
+  var ranges = range.split("_");
+  var initial = Number.parseInt(ranges[0]);
+  var final = Number.parseInt(ranges[1]);
+  var query = articleModel.find({'topic_id':topicId}).sort('-createdOn').select("content_type article_content").skip(initial).limit(final);
+  query.exec(function(err,values){
+    callback(values);
+  });
 }

@@ -43,7 +43,8 @@ var userSchema = new schema({
     level_of_understanding:[String]
   }],
   pendingRequest:[String],
-  accout_createdOn:{type:Date,default:Date.now()}
+  createdOn:{type:Date,default:Date.now()}
+
 
 },{collection:'users'});
 	module.exports = mongoose.model('user',userSchema);

@@ -7,9 +7,12 @@ var topicSchema = new schema({
   topic_title:{type:String},
   topic_detail:{type:String},
   createdBy:{type:String},
-  created_timestamp:{type:String,default:Date.now()},
+  createdOn:{type:Date,default:Date.now()},
   reportAbused:{type:String,default:"0"},
-  articles:[String],
+  articles:[{
+    _id:id,
+    createdOn:{type:Date,default:Date.now()}
+  }],
   pictures:[String],
   audios:[String],
   videos:[String],

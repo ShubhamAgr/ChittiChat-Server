@@ -28,7 +28,14 @@ module.exports = function(app,io,socketMap){
       });
   });
   app.get("/articles/:token/:topicId/:range",function(req,res){
-      res.status(200).json({"aa":"aa"});
+    verifyToken.verify(req.params.token,function(found) {
+      if(found != false){
+          topicActivity.getArticles(req.params.topicId,req.params.range,function(response){
+            res.json(response);
+          });
+      }
+    });
+      // res.status(200).json({"aa":"aa"});
   });
   app.post("/article",function(req,res){
       verifyToken.verify(req.body.token,function(found) {
