@@ -35,14 +35,14 @@ exports.newTopic = function(userId,req,socket,callback){
   });
 }
 
-exports.newArticle = function(userId,topicId,topic_content,socket,callback){
+exports.newArticle = function(userId,topicId,marticle_content,socket,callback){
  var id = new mongoose.Types.ObjectId;
  var newArticle = new articleModel({
     _id:mongoose.Types.ObjectId(id),
     topic_id:topicId,
     publishedBy:userId,
     createdOn:Date.now(),
-    article_content:topic_content,
+    article_content:marticle_content,
     content_type:"texts"
   },{collection:'articles'});
   newArticle.save(function(err,newArticle){

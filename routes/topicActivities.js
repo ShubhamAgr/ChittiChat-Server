@@ -42,7 +42,7 @@ module.exports = function(app,io,socketMap){
   app.post("/article",function(req,res){
       verifyToken.verify(req.body.token,function(found) {
         if(found != false){
-            topicActivity.newArticle(found,req.body.topicId,req.body.topic_content,socketMap,function(response){
+            topicActivity.newArticle(found,req.body.topicId,req.body.article_content,socketMap,function(response){
               res.status(200).json(response);
             });
         }
