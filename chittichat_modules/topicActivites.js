@@ -8,6 +8,7 @@ var audioModel = require('../models/audios');
 var videoModel = require('../models/videos')
 var topicModel = require('../models/topics');
 var multiparty = require('multiparty');
+var async = require('async');
 var util = require('util');
 exports.newTopic = function(userId,req,socket,callback){
   var id =new mongoose.Types.ObjectId;
@@ -178,8 +179,39 @@ exports.getTopics = function(groupId,callback){
      callback(topics);
    });
 }
-exports.getTopicsWithArticle = function(){
+exports.getTopicsWithArticle = function(groupId,callback){
+  var responseArray = new Array();
 
+  var query = topicModel.find({'group_id':groupId}).select('topic_title _id topic_detail');
+   query.exec(function(err,docs){
+      var asyncTask = [];
+      docs.forEach(function(item){
+        asyncTask.push(function(call){
+          var query2 = articleModel.find({'topic_id':item.toObject()._id}).sort('-createdOn').select("_id content_type article_content").limit(1);
+          query2.exec(function(err,articles){
+            var jsonObject  = new Object();
+            console.log(articles);
+              jsonObject.topicId = item.toObject()._id;
+              jsonObject.topic_detail = item.toObject().topic_detail;
+              jsonObject.topic_title = item.toObject().topic_title;
+
+            if(articles[0].toObject() != undefined){
+              jsonObject.article_id = articles[0].toObject()._id;
+              jsonObject.article_content = articles[0].toObject().article_content;
+              jsonObject.content_type = articles[0].toObject().content_type;
+            }
+            responseArray.push(jsonObject);
+            // JsonObject
+            // console.log(values);
+            call();
+          });
+        });
+
+      });
+      async.parallel(asyncTask,function(){
+      callback(responseArray);
+      });
+  });
 }
 exports.getArticles = function(topicId,range,callback){
   //range will be in format of 10_12

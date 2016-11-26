@@ -23,7 +23,9 @@ module.exports = function(app,io,socketMap){
   app.get("/topicsWithArticle/:token/:groupId",function(req,res){
       verifyToken.verify(req.params.token,function(found){
         if(found != "false"){
-        res.status(200).json(response);
+        topicActivity.getTopicsWithArticle(req.params.groupId,function(response){
+            res.status(200).json(response);
+        })
         }
       });
   });
