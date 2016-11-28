@@ -49,7 +49,13 @@ module.exports = function(app,io,socketMap){
       });
   });
   app.post("/image",function(req,res){
-        res.status(200).end();
+    // verifyToken.verify(req.body.token,function(found) {
+    //   if(found != false){
+          topicActivity.newImage(req,socketMap,function(response){
+            res.status(200).json(response);
+          });
+    //   }
+    // });
   });
   app.post("/audio",function(req,res){
         res.status(200).end();

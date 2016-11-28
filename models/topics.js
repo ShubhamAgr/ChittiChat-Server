@@ -12,10 +12,7 @@ var topicSchema = new schema({
   articles:[{
     _id:id,
     createdOn:{type:Date,default:Date.now()}
-  }],
-  pictures:[String],
-  audios:[String],
-  videos:[String],
+  }]
 },{collection:"topics"});
 
 module.exports = mongoose.model("topic",topicSchema);

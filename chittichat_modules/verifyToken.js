@@ -12,7 +12,7 @@ exports.verify = function(token,callback) {
         callback("error");
         //assert true;
       }
-      else if(user[0].length != 0){
+      else if(user.length != 0){
         callback(userId);
       }else{
         callback("false");

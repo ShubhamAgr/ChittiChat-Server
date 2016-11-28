@@ -68,37 +68,55 @@ exports.newArticle = function(userId,topicId,marticle_content,socket,callback){
   });
 }
 
-exports.newImage = function(req,io,callback){
+exports.newImage = function(req,socket,callback){
 var form = new multiparty.Form();
-var path = "../static-Files/images";
-form.uploadDir = "../public/images";
+// var path = "../static-Files/images";
+// form.uploadDir = "../static-Files/images";
+form.uploadDir = "/home/shubham/mygithub";
+var path = "/home/shubham/mygithub";
 form.parse(req,function(err,fields,files){
   if(err) {
-    callback(false);
+    console.log(err);
+    callback({"message":"unsuccessful"});
   }else {
-      Object.keys(fields).foreach(function(name) {
+      Object.keys(fields).forEach(function(name) {
         console.log('file recieved'+name);
       });
       Object.keys(files).forEach(function(name){
         console.log('file recieved'+name);
         var imageId = new mongoose.Types.ObjectId;
-        fs.rename(path+"/"+name,path+"/"+imageId,function(err){
-          if(err){
-            callback(false);
-          }else{
-            var newImage = new imageModel({
-                _id:mongoose.Types.ObjectId(imageId),
-                topic_id:req.body.topicId,
-                publishedBy:req.body.user,
-            });
-            newImage.save(function(err,newImage){
-              topicModel.findByIdAndUpdate(req.body.topicId,{$addToSet:{"images":newImage[0].toObject()._id}},{safe:true,upsert:true},function(err){
-                io.to(req.body.room).emit('newimage',{"ImageId":newImage[0].toObject()._id});
-                callback(true);
-              });
-            });
-          }
-        });
+        // fs.rename(path+"/"+name,path+"/"+imageId,function(err){
+        //   if(err){
+        //     console.log(err);
+        //     callback({"message":"unsuccessful"});
+        //   }else({"message":"successful"});
+          // else{
+          //   var newArticle = new articleModel({
+          //       _id:mongoose.Types.ObjectId(imageId),
+          //       topic_id:req.body.topicId,
+          //       article_content:path+"/"+imageId,
+          //       content_type:req.body.mediatype,
+          //       publishedBy:UserId,
+          //   });
+          //   newImage.save(function(err,newImage){
+          //     topicModel.findByIdAndUpdate(req.body.topicId,{$addToSet:{"articles":{'_id':mongoose.Types.ObjectId(imageId)}}},{safe:true,upsert:true},function(err){
+          //       //io.to(req.body.room).emit('newimage',{"ImageId":newImage[0].toObject()._id});
+          //       if(err){
+          //         callback({"message":"unsuccessful"});
+          //       }else{
+          //         userModel.findByIdAndUpdate(userId,{$addToSet:{"myarticles":imageId},safe:true,upsert:true},function(err){
+          //           if(err){
+          //             callback({"message":"unsuccessful"});
+          //           }else{
+          //               callback({"message":"successful"});
+          //           }
+          //         });
+          //       }
+          //
+          //     });
+          //   });
+          // }
+        // });
       });
     }
 });
