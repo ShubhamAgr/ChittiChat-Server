@@ -1,5 +1,6 @@
 var mongoose = require('mongoose');
 var fs = require('fs');
+var jwt = require('jsonwebtoken');
 var groupModel = require('../models/groups');
 var userModel = require('../models/users');
 var articleModel = require('../models/articles');
@@ -68,128 +69,270 @@ exports.newArticle = function(userId,topicId,marticle_content,socket,callback){
   });
 }
 
+
+
 exports.newImage = function(req,socket,callback){
-var form = new multiparty.Form();
-// var path = "../static-Files/images";
-// form.uploadDir = "../static-Files/images";
-form.uploadDir = "/home/shubham/mygithub";
-var path = "/home/shubham/mygithub";
-form.parse(req,function(err,fields,files){
-  if(err) {
-    console.log(err);
-    callback({"message":"unsuccessful"});
-  }else {
-      Object.keys(fields).forEach(function(name) {
-        console.log('file recieved'+name);
-      });
-      Object.keys(files).forEach(function(name){
-        console.log('file recieved'+name);
+    var count = 0;
+    var form = new multiparty.Form();
+    var path = "/home/shubham/mygithub/";
+    var mypath;
+    form.uploadDir = "/home/shubham/mygithub/";
+    var mytoken;
+    var topicId;
+    var userId;
+
+    form.on('error',function(err){
+      console.log("ERROR");
+    });
+    form.on('part',function(part){
+      if(!part.filename){
+        console.log('got field named'+part.name);
+        //fields content work
         var imageId = new mongoose.Types.ObjectId;
-        // fs.rename(path+"/"+name,path+"/"+imageId,function(err){
-        //   if(err){
-        //     console.log(err);
-        //     callback({"message":"unsuccessful"});
-        //   }else({"message":"successful"});
-          // else{
-          //   var newArticle = new articleModel({
-          //       _id:mongoose.Types.ObjectId(imageId),
-          //       topic_id:req.body.topicId,
-          //       article_content:path+"/"+imageId,
-          //       content_type:req.body.mediatype,
-          //       publishedBy:UserId,
-          //   });
-          //   newImage.save(function(err,newImage){
-          //     topicModel.findByIdAndUpdate(req.body.topicId,{$addToSet:{"articles":{'_id':mongoose.Types.ObjectId(imageId)}}},{safe:true,upsert:true},function(err){
-          //       //io.to(req.body.room).emit('newimage',{"ImageId":newImage[0].toObject()._id});
-          //       if(err){
-          //         callback({"message":"unsuccessful"});
-          //       }else{
-          //         userModel.findByIdAndUpdate(userId,{$addToSet:{"myarticles":imageId},safe:true,upsert:true},function(err){
-          //           if(err){
-          //             callback({"message":"unsuccessful"});
-          //           }else{
-          //               callback({"message":"successful"});
-          //           }
-          //         });
-          //       }
-          //
-          //     });
-          //   });
-          // }
-        // });
+        console.log(imageId);
+        console.log(part);
+        part.resume();
+      }
+      if(part.filename){
+        count++;
+        console.log('got file named'+part.name);
+        part.resume();
+      }
+      part.on('error',function(err){
+       console.log("err");
       });
-    }
-});
-}
-exports.newAudio = function(req,io,callback){
-  var form = new multiparty.Form();
-  var path = "../static-Files/audios";
-  form.uploadDir = "../public/audios";
-  form.parse(req,function(err,fields,files){
-    if(err) {
-      callback(false);
-    }else {
-        Object.keys(fields).foreach(function(name) {
-          console.log('file recieved'+name);
-        });
-        Object.keys(files).forEach(function(name){
-          console.log('file recieved'+name);
-          var audioId = new mongoose.Types.ObjectId;
-          fs.rename(path+"/"+name,path+"/"+audioId,function(err){
+    });
+    form.on('field',function(name,value){
+      console.log(name+":"+value);
+      if(name=='token'){
+        var decoded = jwt.verify(value,'abcdefghijklmnopqr/123@!@#$%');
+        console.log(decoded.foo)
+        userId = decoded.foo;
+      }else if(name=='topicId'){
+        topicId = value;
+      }
+    });
+    form.on('file',function(name,value){
+      console.log(util.inspect(value, false, null));
+      mypath = value.path;
+    });
+    form.on('close',function(){
+      console.log(userId);
+      console.log(topicId);
+      var imageId = new mongoose.Types.ObjectId;
+      fs.rename(mypath,path+"/"+imageId,function(err){
+        if(err){
+          console.log(err);
+          callback({"message":"unsuccessful"});
+      }else{
+      var newArticle = new articleModel({
+          _id:mongoose.Types.ObjectId(imageId),
+          topic_id:req.body.topicId,
+          article_content:path+"/"+imageId,
+          content_type:"image",
+          publishedBy:userId,
+          });
+          newArticle.save(function(err,newArticle){
             if(err){
-              callback(false);
+              callback({"message":"unsuccessful"});
             }else{
-              var newAudio = new audioModel({
-                _id:mongoose.Types.ObjectId(audioId),
-                topicId:req.body.topicId,
-                publishedBy:req.body.userId
-              });
-              newAudio.save(function(err,newAudio){
-                topicModel.findByIdAndUpdate(req.body.topicId,{$addToSet:{"audios":newAudio[0].toObject()._id}},{safe:true,upsert:true},function(err){
-                  io.to(req.body.room).emit('newaudio',{"audioId":newAudio[0].toObject()._id});
-                  callback(true);
+              topicModel.findByIdAndUpdate(topicId,{$addToSet:{"articles":{'_id':mongoose.Types.ObjectId(imageId)}}},{safe:true,upsert:true},function(err){
+              if(err){
+                callback({"message":"unsuccessful"});
+              }else{
+                // io.to(req.body.room).emit('newarticle',{"articleId":newArticle[0].toObject()._id});
+                userModel.findByIdAndUpdate(userId,{$addToSet:{"myarticles":imageId},safe:true,upsert:true},function(err){
+                  if(err){
+                    callback({"message":"unsuccessful"});
+                  }else{
+                    callback({"message":"successful"});
+                  }
                 });
-              });
+
+              }
+            });
             }
           });
-        });
-    }
+        }
+    });
   });
+      form.parse(req);
 }
-exports.newVideo = function(req,io,callback){
-  var form = new multiparty.Form();
-  var path = "../static-Files/videos";
-  form.uploadDir = "../public/videos";
-  form.parse(req,function(err,fields,files){
-    if(err) {
-      callback(false);
-    }else {
-        Object.keys(fields).foreach(function(name) {
-          console.log('file recieved'+name);
-        });
-        Object.keys(files).forEach(function(name){
-          console.log('file recieved'+name);
-          var videoId = new mongoose.Types.ObjectId;
-          fs.rename(path+"/"+name,path+"/"+videoId,function(err){
+
+exports.newAudio = function(req,socket,callback){
+    var count = 0;
+    var form = new multiparty.Form();
+    var path = "/home/shubham/mygithub/";
+    var mypath;
+    form.uploadDir = "/home/shubham/mygithub/";
+    var mytoken;
+    var topicId;
+    var userId;
+
+    form.on('error',function(err){
+      console.log("ERROR");
+    });
+    form.on('part',function(part){
+      if(!part.filename){
+        console.log('got field named'+part.name);
+        //fields content work
+        var imageId = new mongoose.Types.ObjectId;
+        console.log(imageId);
+        console.log(part);
+        part.resume();
+      }
+      if(part.filename){
+        count++;
+        console.log('got file named'+part.name);
+        part.resume();
+      }
+      part.on('error',function(err){
+       console.log("err");
+      });
+    });
+    form.on('field',function(name,value){
+      console.log(name+":"+value);
+      if(name=='token'){
+        var decoded = jwt.verify(value,'abcdefghijklmnopqr/123@!@#$%');
+        console.log(decoded.foo)
+        userId = decoded.foo;
+      }else if(name=='topicId'){
+        topicId = value;
+      }
+    });
+    form.on('file',function(name,value){
+      console.log(util.inspect(value, false, null));
+      mypath = value.path;
+    });
+    form.on('close',function(){
+      console.log(userId);
+      console.log(topicId);
+      var imageId = new mongoose.Types.ObjectId;
+      fs.rename(mypath,path+"/"+imageId,function(err){
+        if(err){
+          console.log(err);
+          callback({"message":"unsuccessful"});
+      }else{
+      var newArticle = new articleModel({
+          _id:mongoose.Types.ObjectId(imageId),
+          topic_id:req.body.topicId,
+          article_content:path+"/"+imageId,
+          content_type:"image",
+          publishedBy:userId,
+          });
+          newArticle.save(function(err,newArticle){
             if(err){
-              callback(false);
+              callback({"message":"unsuccessful"});
             }else{
-              var newVideo = new videoModel({
-                _id:mongoose.Types.ObjectId(videoId),
-                topicId:req.body.topicId,
-                publishedBy:req.body.userId
-              });
-              newVideo.save(function(err,newVideo){
-                topicModel.findByIdAndUpdate(req.body.topicId,{$addToSet:{"videos":newVideo[0].toObject()._id}},{safe:true,upsert:true},function(err){
-                  io.to(req.body.room).emit('newvideo',{"video_id":newVideo[0].toObject()._id});
-                  callback(true);
+              topicModel.findByIdAndUpdate(topicId,{$addToSet:{"articles":{'_id':mongoose.Types.ObjectId(imageId)}}},{safe:true,upsert:true},function(err){
+              if(err){
+                callback({"message":"unsuccessful"});
+              }else{
+                // io.to(req.body.room).emit('newarticle',{"articleId":newArticle[0].toObject()._id});
+                userModel.findByIdAndUpdate(userId,{$addToSet:{"myarticles":imageId},safe:true,upsert:true},function(err){
+                  if(err){
+                    callback({"message":"unsuccessful"});
+                  }else{
+                    callback({"message":"successful"});
+                  }
                 });
-              });
+
+              }
+            });
             }
           });
-        });
-    }
+        }
+    });
   });
+      form.parse(req);
+}
+
+exports.newVideo = function(req,socket,callback){
+    var count = 0;
+    var form = new multiparty.Form();
+    var path = "/home/shubham/mygithub/";
+    var mypath;
+    form.uploadDir = "/home/shubham/mygithub/";
+    var mytoken;
+    var topicId;
+    var userId;
+
+    form.on('error',function(err){
+      console.log("ERROR");
+    });
+    form.on('part',function(part){
+      if(!part.filename){
+        console.log('got field named'+part.name);
+        //fields content work
+        var imageId = new mongoose.Types.ObjectId;
+        console.log(imageId);
+        console.log(part);
+        part.resume();
+      }
+      if(part.filename){
+        count++;
+        console.log('got file named'+part.name);
+        part.resume();
+      }
+      part.on('error',function(err){
+       console.log("err");
+      });
+    });
+    form.on('field',function(name,value){
+      console.log(name+":"+value);
+      if(name=='token'){
+        var decoded = jwt.verify(value,'abcdefghijklmnopqr/123@!@#$%');
+        console.log(decoded.foo)
+        userId = decoded.foo;
+      }else if(name=='topicId'){
+        topicId = value;
+      }
+    });
+    form.on('file',function(name,value){
+      console.log(util.inspect(value, false, null));
+      mypath = value.path;
+    });
+    form.on('close',function(){
+      console.log(userId);
+      console.log(topicId);
+      var imageId = new mongoose.Types.ObjectId;
+      fs.rename(mypath,path+"/"+imageId,function(err){
+        if(err){
+          console.log(err);
+          callback({"message":"unsuccessful"});
+      }else{
+      var newArticle = new articleModel({
+          _id:mongoose.Types.ObjectId(imageId),
+          topic_id:req.body.topicId,
+          article_content:path+"/"+imageId,
+          content_type:"image",
+          publishedBy:userId,
+          });
+          newArticle.save(function(err,newArticle){
+            if(err){
+              callback({"message":"unsuccessful"});
+            }else{
+              topicModel.findByIdAndUpdate(topicId,{$addToSet:{"articles":{'_id':mongoose.Types.ObjectId(imageId)}}},{safe:true,upsert:true},function(err){
+              if(err){
+                callback({"message":"unsuccessful"});
+              }else{
+                // io.to(req.body.room).emit('newarticle',{"articleId":newArticle[0].toObject()._id});
+                userModel.findByIdAndUpdate(userId,{$addToSet:{"myarticles":imageId},safe:true,upsert:true},function(err){
+                  if(err){
+                    callback({"message":"unsuccessful"});
+                  }else{
+                    callback({"message":"successful"});
+                  }
+                });
+
+              }
+            });
+            }
+          });
+        }
+    });
+  });
+      form.parse(req);
 }
 exports.getTopics = function(groupId,callback){
    var query = topicModel.find({'group_id':groupId}).select('topic_title _id topic_detail');
