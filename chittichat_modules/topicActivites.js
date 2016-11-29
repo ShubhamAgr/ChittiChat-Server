@@ -296,7 +296,7 @@ exports.newVideo = function(req,socket,callback){
       console.log(userId);
       console.log(topicId);
       var imageId = new mongoose.Types.ObjectId;
-      fs.rename(mypath,path+"/"+imageId,function(err){
+      fs.rename(mypath,path+imageId,function(err){
         if(err){
           console.log(err);
           callback({"message":"unsuccessful"});
