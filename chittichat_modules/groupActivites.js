@@ -58,7 +58,7 @@ exports.updateGroupPicture =  function(req,callback){
       var count = 0;
       var form = new multiparty.Form();
       var mypath;
-      form.uploadDir = path.normalize('.../media');
+      form.uploadDir = path.normalize('../media');
       var mytoken;
       var groupId;
 
@@ -100,7 +100,7 @@ exports.updateGroupPicture =  function(req,callback){
       form.on('close',function(){
         console.log(userId);
         console.log(groupId);
-        fs.rename(mypath,path.normalize('.../media')+"/"+groupId,function(err){
+        fs.rename(mypath,path.normalize('../media')+"/"+groupId,function(err){
           if(err){
             console.log(err);
             callback({"message":"unsuccessful"});
