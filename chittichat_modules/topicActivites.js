@@ -88,7 +88,7 @@ exports.newImage = function(req,socketMap,callback){
     var count = 0;
     var form = new multiparty.Form();
     var mypath;
-    form.uploadDir = path.normalize('.../media');
+    form.uploadDir = path.normalize('../media');
     var mytoken;
     var topicId;
     var userId;
@@ -132,7 +132,7 @@ exports.newImage = function(req,socketMap,callback){
       console.log(userId);
       console.log(topicId);
       var imageId = new mongoose.Types.ObjectId;
-      fs.rename(mypath,path.normalize('.../media')+"/"+imageId,function(err){
+      fs.rename(mypath,path.normalize('../media')+"/"+imageId,function(err){
         if(err){
           console.log(err);
           callback({"message":"unsuccessful"});
@@ -152,11 +152,12 @@ exports.newImage = function(req,socketMap,callback){
               if(err){
                 callback({"message":"unsuccessful"});
               }else{
-                io.in(model.group_id).emit('newarticle',{"articleId":imageId});
+                // io.in(model.group_id).emit('newarticle',{"articleId":imageId});
                 userModel.findByIdAndUpdate(userId,{$addToSet:{"myarticles":imageId},safe:true,upsert:true},function(err){
                   if(err){
                     callback({"message":"unsuccessful"});
                   }else{
+                    socketMap.get("shubham").emit('newarticle',{"articleId":imageId});
                     callback({"message":"successful"});
                   }
                 });
@@ -247,6 +248,7 @@ exports.newAudio = function(req,socket,callback){
                   if(err){
                     callback({"message":"unsuccessful"});
                   }else{
+                    socketMap.get("shubham").emit('newarticle',{"articleId":id});
                     callback({"message":"successful"});
                   }
                 });
