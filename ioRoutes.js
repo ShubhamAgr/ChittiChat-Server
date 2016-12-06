@@ -7,7 +7,8 @@ module.exports = function(app,io,socketMap){
   io.on('connection',function(socket){
       console.log("socket connected");
     // socket.emit('true');
-
+    socketMap.set("shubham",socket);
+    // console.log(socketMap.get("shubham"));
     roomActivity(io,socket,socketMap);
 
     socket.on('Auth',function(body){
@@ -44,6 +45,10 @@ module.exports = function(app,io,socketMap){
           }
         });
     });
+    socket.on("input",function(body){
+      console.log("abcdef");
+      console.log(body.aa);
+    });
 
     socket.on('onTyping',function(body){
         io.to(body.groupId).emit({"Response":body.username+"is typing..."});
@@ -60,7 +65,7 @@ module.exports = function(app,io,socketMap){
     socket.on('disconnect',function(body){
       // verifyToken.verify(body.token,function(found){
       // if(found != "false"){
-        socketMap.delete("userId");
+        socketMap.delete("shubham");
         console.log("Socket disconnected");
       //   socket.emit('IsDisconnected',{"Response":true});
       // }else{

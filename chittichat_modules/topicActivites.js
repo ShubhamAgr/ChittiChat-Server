@@ -11,6 +11,8 @@ var topicModel = require('../models/topics');
 var multiparty = require('multiparty');
 var async = require('async');
 var util = require('util');
+var path = require('path');
+
 exports.newTopic = function(userId,req,socket,callback){
   var id =new mongoose.Types.ObjectId;
   var newTopic = new topicModel({
@@ -20,6 +22,8 @@ exports.newTopic = function(userId,req,socket,callback){
     topic_detail:req.body.topic_description,
     createdBy:userId,
   },{collection:'topics'});
+
+
   newTopic.save(function(err,newTopic){
     if(err){
       callback({"message":"unsuccessful"});
@@ -36,7 +40,9 @@ exports.newTopic = function(userId,req,socket,callback){
   });
 }
 
-exports.newArticle = function(userId,topicId,marticle_content,socket,callback){
+
+
+exports.newArticle = function(userId,topicId,marticle_content,socketMap,io,callback){
  var id = new mongoose.Types.ObjectId;
  var newArticle = new articleModel({
     _id:mongoose.Types.ObjectId(id),
@@ -50,11 +56,18 @@ exports.newArticle = function(userId,topicId,marticle_content,socket,callback){
     if(err){
       callback({"message":"unsuccessful"});
     }else{
-      topicModel.findByIdAndUpdate(topicId,{$addToSet:{"articles":{'_id':mongoose.Types.ObjectId(id)}}},{safe:true,upsert:true},function(err){
+      topicModel.findByIdAndUpdate(topicId,{$addToSet:{"articles":{'_id':mongoose.Types.ObjectId(id)}}},{safe:true,upsert:true},function(err,model){
       if(err){
         callback({"message":"unsuccessful"});
       }else{
-        // io.to(req.body.room).emit('newarticle',{"articleId":newArticle[0].toObject()._id});
+        // console.log(socketMap.get("shubham"));
+        // console.log(socketMap.get("shubham"));
+        console.log(model.toObject().group_id);
+        // socketMap.get("shubham").emit('newarticle',{"articleId":id});
+          console.log(io);
+          io.to(model.toObject().group_id).emit('newarticle',{"articleId":id});
+        // socketMap.get("shubham").broadcast.in(model.toObject().group_id).emit('newarticle',{"articleId":id});
+        //  io.in(model.room_id).emit("newarticle",{"articleId":id});
         userModel.findByIdAndUpdate(userId,{$addToSet:{"myarticles":id},safe:true,upsert:true},function(err){
           if(err){
             callback({"message":"unsuccessful"});
@@ -70,13 +83,11 @@ exports.newArticle = function(userId,topicId,marticle_content,socket,callback){
 }
 
 
-
-exports.newImage = function(req,socket,callback){
+exports.newImage = function(req,socketMap,callback){
     var count = 0;
     var form = new multiparty.Form();
-    var path = "/home/shubham/mygithub/";
     var mypath;
-    form.uploadDir = "/home/shubham/mygithub/";
+    form.uploadDir = path.normalize('.../media');
     var mytoken;
     var topicId;
     var userId;
@@ -120,15 +131,15 @@ exports.newImage = function(req,socket,callback){
       console.log(userId);
       console.log(topicId);
       var imageId = new mongoose.Types.ObjectId;
-      fs.rename(mypath,path+"/"+imageId,function(err){
+      fs.rename(mypath,path.normalize('.../media')+"/"+imageId,function(err){
         if(err){
           console.log(err);
           callback({"message":"unsuccessful"});
       }else{
       var newArticle = new articleModel({
           _id:mongoose.Types.ObjectId(imageId),
-          topic_id:req.body.topicId,
-          article_content:path+"/"+imageId,
+          topic_id:topicId,
+          article_content:imageId,
           content_type:"image",
           publishedBy:userId,
           });
@@ -136,11 +147,11 @@ exports.newImage = function(req,socket,callback){
             if(err){
               callback({"message":"unsuccessful"});
             }else{
-              topicModel.findByIdAndUpdate(topicId,{$addToSet:{"articles":{'_id':mongoose.Types.ObjectId(imageId)}}},{safe:true,upsert:true},function(err){
+              topicModel.findByIdAndUpdate(topicId,{$addToSet:{"articles":{'_id':mongoose.Types.ObjectId(imageId)}}},{safe:true,upsert:true},function(err,model){
               if(err){
                 callback({"message":"unsuccessful"});
               }else{
-                // io.to(req.body.room).emit('newarticle',{"articleId":newArticle[0].toObject()._id});
+                io.in(model.group_id).emit('newarticle',{"articleId":imageId});
                 userModel.findByIdAndUpdate(userId,{$addToSet:{"myarticles":imageId},safe:true,upsert:true},function(err){
                   if(err){
                     callback({"message":"unsuccessful"});
@@ -158,6 +169,8 @@ exports.newImage = function(req,socket,callback){
   });
       form.parse(req);
 }
+
+
 
 exports.newAudio = function(req,socket,callback){
     var count = 0;
@@ -215,7 +228,7 @@ exports.newAudio = function(req,socket,callback){
       }else{
       var newArticle = new articleModel({
           _id:mongoose.Types.ObjectId(imageId),
-          topic_id:req.body.topicId,
+          topic_id:topicId,
           article_content:path+"/"+imageId,
           content_type:"image",
           publishedBy:userId,
@@ -256,7 +269,8 @@ exports.newVideo = function(req,socket,callback){
     var mytoken;
     var topicId;
     var userId;
-
+    var os = require('os');
+    console.log("os"+os.homedir());
     form.on('error',function(err){
       console.log("ERROR");
     });
@@ -374,13 +388,22 @@ exports.getTopicsWithArticle = function(groupId,callback){
       });
   });
 }
+
+
 exports.getArticles = function(topicId,range,callback){
   //range will be in format of 10_12
   var ranges = range.split("_");
   var initial = Number.parseInt(ranges[0]);
   var final = Number.parseInt(ranges[1]);
-  var query = articleModel.find({'topic_id':topicId}).sort('-createdOn').select("content_type article_content").skip(initial).limit(final);
+  var query = articleModel.find({'topic_id':topicId}).sort('-createdOn').select("content_type article_content publishedBy createdOn").skip(initial).limit(final);
   query.exec(function(err,values){
     callback(values);
+  });
+}
+
+exports.getArticleByArticleId = function(articleId,callback){
+  var query = articleModel.find({'_id':articleId}).select("content_type article_content publishedBy createdOn");
+  query.exec(function(err,value){
+    callback(value);
   });
 }

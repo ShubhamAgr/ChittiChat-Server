@@ -29,20 +29,27 @@ module.exports = function(app,io,socketMap){
         }
       });
   });
-  app.get("/articles/:token/:topicId/:range",function(req,res){
-    verifyToken.verify(req.params.token,function(found) {
+
+      app.get("/articles/:token/:topicId/:range",function(req,res){
+verifyToken.verify(req.params.token,function(found) {
       if(found != false){
+        console.log(req.params.topicId);
+        console.log(req.params.range);
+
           topicActivity.getArticles(req.params.topicId,req.params.range,function(response){
-            res.json(response);
+            console.log(response);
+            res.status(200).json(response);
           });
       }
     });
       // res.status(200).json({"aa":"aa"});
   });
   app.post("/article",function(req,res){
+
       verifyToken.verify(req.body.token,function(found) {
         if(found != false){
-            topicActivity.newArticle(found,req.body.topicId,req.body.article_content,socketMap,function(response){
+          console.log(req.body.topic_id+req.body.article_content);
+            topicActivity.newArticle(found,req.body.topic_id,req.body.article_content,socketMap,io,function(response){
               res.status(200).json(response);
             });
         }

@@ -7,6 +7,7 @@ module.exports = function(app,io,socketMap){
       verifyToken.verify(req.body.token,function(found) {
       if(found != "false") {
         groupActivity.newgroup(found,req,function(response){
+          console.log(response);
           res.status(200).json(response);
         });
       }
@@ -73,5 +74,11 @@ module.exports = function(app,io,socketMap){
     verifyToken.verify(req.params.token,function(found){
 
     });
+  });
+  app.post('/updateGroupProfilepic',function(req,res){
+    groupActivity.updateGroupPicture(req,function(response){
+      res.status(200).json(response);
+    });
+
   });
 }

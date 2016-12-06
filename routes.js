@@ -2,7 +2,7 @@ var userActivities = require('./routes/userActivities');
 var groupActivites = require('./routes/groupActivities');
 var topicActivites = require('./routes/topicActivities')
 var search = require('./routes/search');
-module.exports = function(app,io,db,socketMap) {
+module.exports = function(app,io,socketMap) {
   userActivities(app,io,socketMap);
   groupActivites(app,io,socketMap);
   topicActivites(app,io,socketMap);
