@@ -1,7 +1,7 @@
 var roomActivity = require('./routes/roomActivites');
 var middleware = require('socketio-wildcard')();
 var verifyToken = require('./chittichat_modules/verifyToken');
-
+var jwt = require('jsonwebtoken');
 module.exports = function(app,io,socketMap){
   io.use(middleware);
   io.on('connection',function(socket){
@@ -12,15 +12,10 @@ module.exports = function(app,io,socketMap){
     roomActivity(io,socket,socketMap);
 
     socket.on('Auth',function(body){
-    //   verifyToken.verify(body.token,function(found){
-    //   if(found != "false"){
-        socketMap.set("userId",socket);
-        console.log(socketMap);
-    //     socket.emit('IsAuthorized',{"Response":true});
-    //   }else{
-    //     socket.emit('IsAuthorized',{"Response":false});
-    //   }
-    // });
+      var decoded = jwt.verify(body.token,'abcdefghijklmnopqr/123@!@#$%');
+      console.log(decoded.foo)
+      userId = decoded.foo;
+      socketMap.set(userId,socket);
     });
     socket.on('joinRoom',function(body){
        socket.join(body.room_id);
@@ -63,16 +58,15 @@ module.exports = function(app,io,socketMap){
     // });
 
     socket.on('disconnect',function(body){
-      // verifyToken.verify(body.token,function(found){
-      // if(found != "false"){
-        socketMap.delete("shubham");
         console.log("Socket disconnected");
-      //   socket.emit('IsDisconnected',{"Response":true});
-      // }else{
-      //   socket.emit('IsDisconnected',{"Response":true});
-      // }
-      // });
-    });
 
+    });
+    socket.on('appClose',function(body){
+        var decoded = jwt.verify(body.token,'abcdefghijklmnopqr/123@!@#$%');
+        console.log(decoded.foo)
+        userId = decoded.foo;
+        socketMap.delete(userId);
+        console.log("Socket disconnected");
+      });
   });
 }

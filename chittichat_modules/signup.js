@@ -9,8 +9,8 @@ exports.newUser = function(req,IsByFacebook,callback){
     newUser = new userModel({
       _id:mongoose.Types.ObjectId(id),
       facebook_id:req.body.facebook_id,
-      firstName:req.body.firstName,
-      lastName:req.body.lastName
+      firstName:req.body.first_name,
+      lastName:req.body.last_name
     },{collection:'user'})
   }else{
     const salt = bcrypt.genSaltSync(10);//slow the process so change it to async...

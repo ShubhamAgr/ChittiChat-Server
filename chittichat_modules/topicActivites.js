@@ -60,12 +60,8 @@ exports.newArticle = function(userId,topicId,marticle_content,socketMap,io,callb
       if(err){
         callback({"message":"unsuccessful"});
       }else{
-        // console.log(socketMap.get("shubham"));
-        // console.log(socketMap.get("shubham"));
         console.log(model.toObject().group_id);
-        // socketMap.get("shubham").emit('newarticle',{"articleId":id});
-          // console.log(io);
-          // io.to(model.toObject().group_id).emit('newarticle',{"articleId":id});
+        socketMap.get(userId).emit('newarticle',{"articleId":id});
         // socketMap.get("shubham").broadcast.in(model.toObject().group_id).emit('newarticle',{"articleId":id});
         //  io.in(model.room_id).emit("newarticle",{"articleId":id});
         userModel.findByIdAndUpdate(userId,{$addToSet:{"myarticles":id},safe:true,upsert:true},function(err){
@@ -395,12 +391,33 @@ exports.getTopicsWithArticle = function(groupId,callback){
 
 exports.getArticles = function(topicId,range,callback){
   //range will be in format of 10_12
+  var responseArray = new Array();
   var ranges = range.split("_");
   var initial = Number.parseInt(ranges[0]);
   var final = Number.parseInt(ranges[1]);
   var query = articleModel.find({'topic_id':topicId}).sort('-createdOn').select("content_type article_content publishedBy createdOn").skip(initial).limit(final);
   query.exec(function(err,values){
-    callback(values);
+    var asyncTask = [];
+    values.forEach(function(item){
+    var jsonObject  = new Object();
+    asyncTask.push(function(call){
+
+      userModel.find({'_id':item.toObject().publishedBy},function(err,users){
+        jsonObject._id = item.toObject()._id;
+        jsonObject.username = users[0].firstName;
+        jsonObject.published_by = item.toObject().publishedBy;
+        jsonObject.content_type = item.toObject().article_content;
+        jsonObject.created_on = item.toObject().createdOn;
+        responseArray.push(jsonObject);
+        call();
+      });
+
+
+      });
+    });
+    async.parallel(asyncTask,function(){
+    callback(responseArray);
+    });
   });
 }
 
