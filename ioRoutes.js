@@ -11,11 +11,14 @@ module.exports = function(app,io,socketMap){
     // console.log(socketMap.get("shubham"));
     roomActivity(io,socket,socketMap);
 
-    socket.on('Auth',function(body){
-      var decoded = jwt.verify(body.token,'abcdefghijklmnopqr/123@!@#$%');
-      console.log(decoded.foo)
-      userId = decoded.foo;
-      socketMap.set(userId,socket);
+    socket.on('authorize',function(body){
+      if(body.token != "null"){
+        var decoded = jwt.verify(body.token,'abcdefghijklmnopqr/123@!@#$%');
+        console.log(decoded.foo)
+        userId = decoded.foo;
+        socketMap.set(userId,socket);
+        console.log(socketMap.get(userId));
+      }
     });
     socket.on('joinRoom',function(body){
        socket.join(body.room_id);
@@ -61,12 +64,17 @@ module.exports = function(app,io,socketMap){
         console.log("Socket disconnected");
 
     });
-    socket.on('appClose',function(body){
+    socket.on('app_close',function(body){
+      if(body.token != "null"){
         var decoded = jwt.verify(body.token,'abcdefghijklmnopqr/123@!@#$%');
         console.log(decoded.foo)
         userId = decoded.foo;
         socketMap.delete(userId);
         console.log("Socket disconnected");
+      }else{
+        console.log("nul token");
+      }
+
       });
   });
 }

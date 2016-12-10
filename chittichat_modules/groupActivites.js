@@ -42,6 +42,13 @@ exports.groupDetail = function(groupId,callback){
     callback(response);
   });
 }
+exports.getKnockKnockQuestion = function(groupId,callback){
+  groupModel.find({"_id":groupId},function(err,group){
+    var response = new Object();
+    response.knock_knock_question = group[0].toObject().knock_knock_question;
+    callback(response);
+  });
+}
 exports.addMember = function(){
 
 }

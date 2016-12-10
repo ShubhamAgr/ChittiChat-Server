@@ -47,7 +47,7 @@ app.post("/search",function(req,res){
 
 app.post('/searchGroups',function(req,res){
   MongoClient.connect(url,function(err,db){
-    db.collection('groups').find({'group_name':{$regex:req.body.query,$options:"$i"}},{'group_name':1,'_id':true}).limit(2).sort({key:1}).toArray(function(err,results){
+    db.collection('groups').find({'group_name':{$regex:req.body.query,$options:"$i"}},{'group_name':1,'_id':true}).limit(3).sort({key:1}).toArray(function(err,results){
         console.log(results);
         res.json(results);
     });
