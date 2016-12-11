@@ -24,7 +24,7 @@ module.exports = function(app,io,socketMap){
       });
   });
   app.get('/followGroup/:token/:groupid',function(req,res){
-    verifyToken.verify(req.params.token,function(req,res){
+    verifyToken.verify(req.params.token,function(found){
         if(found != "false") {
           groupActivity.followGroups(found,req.params.groupid,function(response){
               res.status(200).json(response);
@@ -33,7 +33,7 @@ module.exports = function(app,io,socketMap){
     });
   });
   app.get('/unfollowGroup/:token/:groupid',function(req,res){
-    verifyToken.verify(req.params.token,function(req,res){
+    verifyToken.verify(req.params.token,function(found){
       if(found != "false") {
         groupActivity.unfollowGroups(found,req.params.groupid,function(response){
           res.json(response);
