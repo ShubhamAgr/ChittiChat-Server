@@ -406,7 +406,8 @@ exports.getArticles = function(topicId,range,callback){
         jsonObject._id = item.toObject()._id;
         jsonObject.username = users[0].firstName;
         jsonObject.published_by = item.toObject().publishedBy;
-        jsonObject.content_type = item.toObject().article_content;
+        jsonObject.content_type = item.toObject().content_type;
+        jsonObject.article_content = item.toObject().article_content;
         jsonObject.created_on = item.toObject().createdOn;
         responseArray.push(jsonObject);
         call();
