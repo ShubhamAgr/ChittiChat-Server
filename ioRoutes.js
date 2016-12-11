@@ -17,8 +17,8 @@ module.exports = function(app,io,socketMap){
         console.log(decoded.foo)
         userId = decoded.foo;
         socketMap.set(userId,socket);
-
-        console.log(socketMap.get(userId));
+        console.log("socket added to map");
+        // console.log(socketMap.get(userId));
       }
     });
     socket.on('joinRoom',function(body){
@@ -88,7 +88,7 @@ module.exports = function(app,io,socketMap){
         socketMap.delete(userId);
         console.log("Socket disconnected");
       }else{
-        console.log("nul token");
+        console.log("null token");
       }
 
       });
