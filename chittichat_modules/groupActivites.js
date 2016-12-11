@@ -135,7 +135,7 @@ exports.changeGroupName = function(){
 }
 exports.addNewRequest = function(userId,groupId,knock_knock_answer,callback){
     var newRequests = {"by":userId,"knock_knock_answer":knock_knock_answer};
-    userModel.findOneAndUpdate({'_id':groupId},{$addToSet:{"pending_join_requests":newRequests}},{safe:true,upsert:true},function(err,groups){
+    groupModel.findOneAndUpdate({'_id':groupId},{$addToSet:{"pending_join_requests":newRequests}},{safe:true,upsert:true},function(err,groups){
     if(err){
       callback({"message":"unsuccessful"});
 

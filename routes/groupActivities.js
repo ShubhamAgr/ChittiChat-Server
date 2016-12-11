@@ -17,25 +17,25 @@ module.exports = function(app,io,socketMap){
   app.post('/newRequest',function(req,res){
       verifyToken.verify(req.body.token,function(found){
         if(found != "false") {
-          groupActivity.addNewRequest(found,req.body.groupId,req.body.knock_knock_question,function(response){
+          groupActivity.addNewRequest(found,req.body.group_id,req.body.answer,function(response){
             res.status(200).json(response);
           });
         }
       });
   });
-  app.get('/followGroup/:token/:groupId',function(req,res){
+  app.get('/followGroup/:token/:groupid',function(req,res){
     verifyToken.verify(req.params.token,function(req,res){
         if(found != "false") {
-          groupActivity.followGroups(found,req.params.groupId,function(response){
+          groupActivity.followGroups(found,req.params.groupid,function(response){
               res.status(200).json(response);
           });
         }
     });
   });
-  app.get('/unfollowGroup/:token/:groupId',function(req,res){
+  app.get('/unfollowGroup/:token/:groupid',function(req,res){
     verifyToken.verify(req.params.token,function(req,res){
       if(found != "false") {
-        groupActivity.unfollowGroups(found,req.params.groupId,function(response){
+        groupActivity.unfollowGroups(found,req.params.groupid,function(response){
           res.json(response);
         });
       }
