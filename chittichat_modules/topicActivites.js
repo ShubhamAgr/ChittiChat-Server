@@ -60,7 +60,7 @@ exports.newArticle = function(userId,topicId,marticle,socketMap,io,callback){
       if(err){
         callback({"message":"unsuccessful"});
       }else{
-        console.log("groupId":model.toObject().group_id);
+        console.log("groupId:"model.toObject().group_id);
         // socketMap.get(userId).emit('newarticle',{"articleId":id});
         // socketMap.get("shubham").broadcast.in(model.toObject().group_id).emit('newarticle',{"articleId":id});
         //  io.in(model.room_id).emit("newarticle",{"articleId":id});
