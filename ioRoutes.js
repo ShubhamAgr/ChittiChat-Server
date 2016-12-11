@@ -21,17 +21,30 @@ module.exports = function(app,io,socketMap){
       }
     });
     socket.on('joinRoom',function(body){
-       socket.join(body.room_id);
-       console.log("Room Joining")
-       socket.emit('onJoinRequest',{"Response":true});
+
+       if(body.token != "null"){
+         var decoded = jwt.verify(body.token,'abcdefghijklmnopqr/123@!@#$%');
+         console.log(decoded.foo)
+         userId = decoded.foo;
+         socketMap.get(userId).join(body.room_id);
+         console.log("Room Joining")
+         socket.emit('onJoinRequest',{"Response":true});
+       }
+
     });
     socket.on("error",function(body){
       console.log(body);
     })
     socket.on('leaveRoom',function(body){
-          console.log("leaving rooms");
-          socket.leave(body.room_id);
-          socket.emit('onLeaveRequest',{"Response":true});
+      if(body.token != "null"){
+        var decoded = jwt.verify(body.token,'abcdefghijklmnopqr/123@!@#$%');
+        console.log(decoded.foo)
+        userId = decoded.foo;
+        console.log("leaving rooms");
+        socketMap.get(userId).leave(body.room_id);
+        socket.emit('onLeaveRequest',{"Response":true});
+      }
+
     });
 
     socket.on('knockknock',function(body){

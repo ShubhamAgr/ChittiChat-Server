@@ -31,7 +31,7 @@ module.exports = function(app,io,socketMap){
   });
 
       app.get("/articles/:token/:topicId/:range",function(req,res){
-verifyToken.verify(req.params.token,function(found) {
+      verifyToken.verify(req.params.token,function(found) {
       if(found != false){
         console.log(req.params.topicId);
         console.log(req.params.range);
