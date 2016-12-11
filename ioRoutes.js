@@ -7,7 +7,7 @@ module.exports = function(app,io,socketMap){
   io.on('connection',function(socket){
       console.log("socket connected");
     // socket.emit('true');
-    socketMap.set("shubham",socket);
+    // socketMap.set("shubham",socket);
     // console.log(socketMap.get("shubham"));
     roomActivity(io,socket,socketMap);
 
@@ -17,6 +17,7 @@ module.exports = function(app,io,socketMap){
         console.log(decoded.foo)
         userId = decoded.foo;
         socketMap.set(userId,socket);
+
         console.log(socketMap.get(userId));
       }
     });
@@ -27,7 +28,7 @@ module.exports = function(app,io,socketMap){
          console.log(decoded.foo)
          userId = decoded.foo;
         //  socketMap.get(userId).join(body.room_id);
-        socket.join(body.room_id;)
+        socket.join(body.room_id);
          console.log("Room Joining")
          socket.emit('onJoinRequest',{"Response":true});
        }
