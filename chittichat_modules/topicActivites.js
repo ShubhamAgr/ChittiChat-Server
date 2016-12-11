@@ -42,14 +42,14 @@ exports.newTopic = function(userId,req,socket,callback){
 
 
 
-exports.newArticle = function(userId,topicId,marticle_content,socketMap,io,callback){
+exports.newArticle = function(userId,topicId,marticle,socketMap,io,callback){
  var id = new mongoose.Types.ObjectId;
  var newArticle = new articleModel({
     _id:mongoose.Types.ObjectId(id),
     topic_id:topicId,
     publishedBy:userId,
     createdOn:Date.now(),
-    article_content:marticle_content,
+    article_content:marticle,
     content_type:"texts"
   },{collection:'articles'});
   newArticle.save(function(err,newArticle){
@@ -395,7 +395,7 @@ exports.getArticles = function(topicId,range,callback){
   var ranges = range.split("_");
   var initial = Number.parseInt(ranges[0]);
   var final = Number.parseInt(ranges[1]);
-  var query = articleModel.find({'topic_id':topicId}).sort('-createdOn').select("content_type article_content publishedBy createdOn").skip(initial).limit(final);
+  var query = articleModel.find({'topic_id':topicId}).sort('-createdOn').select(" article_content publishedBy createdOn content_type").skip(initial).limit(final);
   query.exec(function(err,values){
     var asyncTask = [];
     values.forEach(function(item){

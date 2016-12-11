@@ -48,8 +48,8 @@ verifyToken.verify(req.params.token,function(found) {
 
       verifyToken.verify(req.body.token,function(found) {
         if(found != false){
-          console.log(req.body.topic_id+req.body.article_content);
-            topicActivity.newArticle(found,req.body.topic_id,req.body.article_content,socketMap,io,function(response){
+          console.log(req.body.topic_id+req.body.marticle);
+            topicActivity.newArticle(found,req.body.topic_id,req.body.marticle,socketMap,io,function(response){
               res.status(200).json(response);
             });
         }
