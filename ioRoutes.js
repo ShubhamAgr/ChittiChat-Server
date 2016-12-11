@@ -28,7 +28,8 @@ module.exports = function(app,io,socketMap){
          console.log(decoded.foo)
          userId = decoded.foo;
         //  socketMap.get(userId).join(body.room_id);
-        socket.join(body.room_id);
+        //socket.join(body.room_id);
+        socket.join("Shu");
          console.log("Room Joining")
          socket.emit('onJoinRequest',{"Response":true});
        }
@@ -44,7 +45,8 @@ module.exports = function(app,io,socketMap){
         userId = decoded.foo;
         console.log("leaving rooms");
         // socketMap.get(userId).leave(body.room_id);
-        socket.leave(body.room_id);
+        // socket.leave(body.room_id);
+        socket.leave("Shu");
         socket.emit('onLeaveRequest',{"Response":true});
       }
 

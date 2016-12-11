@@ -176,3 +176,37 @@ exports.unfollowGroups = function(userId,groupId,callback){
     }
   });
 }
+
+exports.accept_request = function(userId,requestedBy,callback){
+  userModel.findByIdAndUpdate(requestedBy,{$addToSet:{"groups":{_id:mongoose.Types.ObjectId(groupId),"role":"member"}}},{safe:true,upsert:true},function(err){
+    if(err){
+      callback({"message":"unsuccessful"});
+    }else{
+      groupModel.findByIdAndUpdate(groupId,{$addToSet:{"members":userId}},{safe:true,upsert:true},function(err){
+        if(err){
+          callback({"message":"unsuccessful"});
+        }else{
+          var deleteRequests = {"by":requestedBy};
+          groupModel.findByIdAndUpdate(groupId,{$pull:{"pending_join_requests":deleteRequests}},{safe:true,upsert:true},function(err){
+            if(err){
+              callback({"message":"unsuccessful"});
+            }else{
+              callback({"message":"successful"});
+            };
+        });
+      }
+
+  });
+}
+});
+}
+exports.deny_request = function(userId,requestedBy,callback){
+  var deleteRequests = {"by":requestedBy};
+  groupModel.findByIdAndUpdate(groupId,{$pull:{"pending_join_requests":deleteRequests}},{safe:true,upsert:true},function(err){
+    if(err){
+      callback({"message":"unsuccessful"});
+    }else{
+      callback({"message":"successful"});
+    }
+  });
+}

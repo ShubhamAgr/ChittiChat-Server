@@ -14,6 +14,20 @@ module.exports = function(app,io,socketMap){
     });
 
   });
+
+  app.post('/accept_request',function(req,res){
+    verifyToken.verify(req.body.token,function(found){
+      if(found != "false"){
+
+      }
+    });
+  });
+
+  app.post('/deny_request',function(req,res){
+     verifyToken.verify(req.body.token,function(found){
+
+     });
+  });
   app.post('/newRequest',function(req,res){
       verifyToken.verify(req.body.token,function(found){
         if(found != "false") {

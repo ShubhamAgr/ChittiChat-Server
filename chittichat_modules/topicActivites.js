@@ -65,7 +65,7 @@ exports.newArticle = function(userId,topicId,marticle,socketMap,io,callback){
         // socketMap.get("shubham").broadcast.in(model.toObject().group_id).emit('newarticle',{"articleId":id});
         //  io.in(model.room_id).emit("newarticle",{"articleId":id});
         // console.log(io);
-        io.to(model.toObject().group_id).emit('newarticle',{"articleId":id});
+        io.to("Shu").emit('newarticle',{"articleId":id});
         userModel.findByIdAndUpdate(userId,{$addToSet:{"myarticles":id},safe:true,upsert:true},function(err){
           if(err){
             callback({"message":"unsuccessful"});
