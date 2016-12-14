@@ -429,8 +429,10 @@ exports.getArticleByArticleId = function(articleId,callback){
 
 }
 exports.getUsernameByUserId = function(userId,callback){
-  var query = userModel.find({'_id':userId}).select("username");
+  var query = userModel.find({'_id':userId}).select("firstName");
   query.exec(function(err,value){
-    callback(value);
+    var obj = new Object();
+    obj.username=value[0].firstName;
+    callback(obj);
   });
 }
