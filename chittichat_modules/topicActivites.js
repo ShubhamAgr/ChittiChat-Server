@@ -430,7 +430,9 @@ exports.getArticleByArticleId = function(articleId,callback){
 }
 exports.getUsernameByUserId = function(userId,callback){
   var query = userModel.find({'_id':userId}).select("firstName");
+  console.log(userId);
   query.exec(function(err,value){
+    console.log(value);
     var obj = new Object();
     obj.username=value[0].toObject().firstName;
     callback(obj);
