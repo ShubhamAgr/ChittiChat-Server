@@ -392,7 +392,7 @@ exports.getArticles = function(topicId,range,callback){
   var ranges = range.split("_");
   var initial = Number.parseInt(ranges[0]);
   var final = Number.parseInt(ranges[1]);
-  var query = articleModel.find({'topic_id':topicId}).sort('-createdOn').select(" article_content published_by created_on content_type").skip(initial).limit(final);
+  var query = articleModel.find({'topic_id':topicId}).sort('-created_on').select(" article_content published_by created_on content_type").skip(initial).limit(final);
   query.exec(function(err,values){
   console.log(values);
   callback(values);
