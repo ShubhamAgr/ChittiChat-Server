@@ -18,13 +18,21 @@ module.exports = function(app,io,socketMap){
   app.post('/accept_request',function(req,res){
     verifyToken.verify(req.body.token,function(found){
       if(found != "false"){
-
+        groupActivity.accept_request(found,req.body.requested_by,function(response){
+          console.log(response);
+          callback(response);
+        });
       }
     });
   });
 
   app.post('/deny_request',function(req,res){
      verifyToken.verify(req.body.token,function(found){
+       if(found != "false"){
+        groupActivity.deny_request(found,req.body.requested_by,function(response){
+            callback(response);
+        });
+       }
 
      });
   });

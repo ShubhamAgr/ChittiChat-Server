@@ -61,21 +61,12 @@ exports.newArticle = function(userId,topicId,marticle,socketMap,io,callback){
         callback({"message":"unsuccessful"});
       }else{
         console.log("groupId:"+ model.toObject().group_id);
-
-        //  io.in(model.room_id).emit("newarticle",{"articleId":id});
-        // console.log(io);
-        // io.to('some room').emit('some event'):
-        // io.emit('newarticle',{"articleId":id});
-        //
         userModel.findByIdAndUpdate(userId,{$addToSet:{"myarticles":id},safe:true,upsert:true},function(err){
           if(err){
             callback({"message":"unsuccessful"});
           }else{
             io.to(topicId).emit('newarticle',{"articleId":id});
-            // socketMap.get(userId).emit('newarticle',{"articleId":id});
-            // socketMap.get(userId).broadcast.to(topicId).emit('newarticle',{"articleId":id});
-              // socketMap.get("shubham").emit('newarticle',{"articleId":id});
-              callback({"message":"successful"});
+            callback({"message":"successful"});
           }
         });
 
@@ -397,39 +388,48 @@ exports.getTopicsWithArticle = function(groupId,callback){
 
 exports.getArticles = function(topicId,range,callback){
   //range will be in format of 10_12
-  var responseArray = new Array();
+  // var responseArray = new Array();
   var ranges = range.split("_");
   var initial = Number.parseInt(ranges[0]);
   var final = Number.parseInt(ranges[1]);
   var query = articleModel.find({'topic_id':topicId}).sort('-createdOn').select(" article_content publishedBy createdOn content_type").skip(initial).limit(final);
   query.exec(function(err,values){
-    var asyncTask = [];
-    values.forEach(function(item){
-    var jsonObject  = new Object();
-    asyncTask.push(function(call){
+  console.log(values);
+  callback(values);
+    // var asyncTask = [];
+    // values.forEach(function(item){
+    // var jsonObject  = new Object();
+    // asyncTask.push(function(call){
 
-      userModel.find({'_id':item.toObject().publishedBy},function(err,users){
-        jsonObject._id = item.toObject()._id;
-        jsonObject.username = users[0].firstName;
-        jsonObject.published_by = item.toObject().publishedBy;
-        jsonObject.content_type = item.toObject().content_type;
-        jsonObject.article_content = item.toObject().article_content;
-        jsonObject.created_on = item.toObject().createdOn;
-        responseArray.push(jsonObject);
-        call();
-      });
+      // userModel.find({'_id':item.toObject().publishedBy},function(err,users){
+      //   jsonObject._id = item.toObject()._id;
+      //   jsonObject.username = users[0].firstName;
+      //   jsonObject.published_by = item.toObject().publishedBy;
+      //   jsonObject.content_type = item.toObject().content_type;
+      //   jsonObject.article_content = item.toObject().article_content;
+      //   jsonObject.created_on = item.toObject().createdOn;
+      //   responseArray.push(jsonObject);
+      //   call();
+      // });
 
 
-      });
-    });
-    async.parallel(asyncTask,function(){
-    callback(responseArray);
-    });
+      // });
+    // });
+    // async.parallel(asyncTask,function(){
+    // callback(responseArray);
+    // });
   });
 }
 
 exports.getArticleByArticleId = function(articleId,callback){
   var query = articleModel.find({'_id':articleId}).select("content_type article_content publishedBy createdOn");
+  query.exec(function(err,value){
+    callback(value);
+  });
+
+}
+exports.getUsernameByUserId = function(userId,callback){
+  var query = userModel.find({'_id':userId}).select("username");
   query.exec(function(err,value){
     callback(value);
   });

@@ -42,11 +42,23 @@ module.exports = function(app,io,socketMap){
           });
       }
     });
-      // res.status(200).json({"aa":"aa"});
   });
-  app.post("/article",function(req,res){
 
-      verifyToken.verify(req.body.token,function(found) {
+  app.get("getArticleByArticleId/:article_id",function(req,res){
+    topicActivity.getArticleByArticleId(req.params.article_id,function(response){
+      console.log(response);
+      res.status(200).json(response);
+    });
+  });
+
+  app.get("getUsernameByUserId/:user_id",function(req,res){
+    topicActivity.getUsernameByUserId(req.params.user_id,function(response){
+        res.status(200).json(response);
+    });
+  });
+
+  app.post("/article",function(req,res){
+    verifyToken.verify(req.body.token,function(found) {
         if(found != false){
           console.log(req.body.topic_id+req.body.marticle);
             topicActivity.newArticle(found,req.body.topic_id,req.body.marticle,socketMap,io,function(response){
@@ -55,14 +67,11 @@ module.exports = function(app,io,socketMap){
         }
       });
   });
+
   app.post("/image",function(req,res){
-    // verifyToken.verify(req.body.token,function(found) {
-    //   if(found != false){
-          topicActivity.newImage(req,socketMap,function(response){
-            res.status(200).json(response);
-          });
-    //   }
-    // });
+    topicActivity.newImage(req,socketMap,function(response){
+        res.status(200).json(response);
+    });
   });
   app.post("/audio",function(req,res){
         res.status(200).end();

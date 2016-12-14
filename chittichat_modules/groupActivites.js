@@ -49,9 +49,6 @@ exports.getKnockKnockQuestion = function(groupId,callback){
     callback(response);
   });
 }
-exports.addMember = function(){
-
-}
 exports.removeMember = function(){
 
 }
@@ -75,10 +72,6 @@ exports.updateGroupPicture =  function(req,callback){
       form.on('part',function(part){
         if(!part.filename){
           console.log('got field named'+part.name);
-          //fields content work
-          // var imageId = new mongoose.Types.ObjectId;
-          // console.log(imageId);
-          // console.log(part);
           part.resume();
         }
         if(part.filename){
