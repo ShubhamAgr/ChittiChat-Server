@@ -44,14 +44,14 @@ module.exports = function(app,io,socketMap){
     });
   });
 
-  app.get("getArticleByArticleId/:article_id",function(req,res){
+  app.get("/getArticleByArticleId/:article_id",function(req,res){
     topicActivity.getArticleByArticleId(req.params.article_id,function(response){
       console.log(response);
       res.status(200).json(response);
     });
   });
 
-  app.get("getUsernameByUserId/:user_id",function(req,res){
+  app.get("/getUsernameByUserId/:user_id",function(req,res){
     topicActivity.getUsernameByUserId(req.params.user_id,function(response){
         res.status(200).json(response);
     });
