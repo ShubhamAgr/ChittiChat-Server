@@ -432,7 +432,7 @@ exports.getUsernameByUserId = function(userId,callback){
   var query = userModel.find({'_id':userId}).select("firstName");
   query.exec(function(err,value){
     var obj = new Object();
-    obj.username=value[0].firstName;
+    obj.username=value[0].toObject().firstName;
     callback(obj);
   });
 }
