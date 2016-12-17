@@ -56,6 +56,7 @@ module.exports = function(app,io,socketMap){
   });
   app.get('/requests/:groupid',function(req,res){
       groupActivity.requests(req.params.groupid,function(response){
+        console.log(response);
         res.status(200).json(response);
       });
   });
