@@ -18,7 +18,7 @@ module.exports = function(app,io,socketMap){
   app.post('/accept_request',function(req,res){
     verifyToken.verify(req.body.token,function(found){
       if(found != "false"){
-        groupActivity.accept_request(found,req.body.requested_by,function(response){
+        groupActivity.accept_request(req.body.group_id,req.body.requested_by,function(response){
           console.log(response);
           callback(response);
         });
@@ -29,7 +29,7 @@ module.exports = function(app,io,socketMap){
   app.post('/deny_request',function(req,res){
      verifyToken.verify(req.body.token,function(found){
        if(found != "false"){
-        groupActivity.deny_request(found,req.body.requested_by,function(response){
+        groupActivity.deny_request(req.body.group_id,req.body.requested_by,function(response){
             callback(response);
         });
        }

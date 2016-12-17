@@ -175,7 +175,7 @@ exports.requests = function(groupId,callback){
     callback(value[0].toObject().pending_join_requests);
   });
 }
-exports.accept_request = function(userId,requestedBy,callback){
+exports.accept_request = function(groupId,requestedBy,callback){
   userModel.findByIdAndUpdate(requestedBy,{$addToSet:{"groups":{_id:mongoose.Types.ObjectId(groupId),"role":"member"}}},{safe:true,upsert:true},function(err){
     if(err){
       callback({"message":"unsuccessful"});
@@ -198,7 +198,7 @@ exports.accept_request = function(userId,requestedBy,callback){
 }
 });
 }
-exports.deny_request = function(userId,requestedBy,callback){
+exports.deny_request = function(groupId,requestedBy,callback){
   var deleteRequests = {"by":requestedBy};
   groupModel.findByIdAndUpdate(groupId,{$pull:{"pending_join_requests":deleteRequests}},{safe:true,upsert:true},function(err){
     if(err){
