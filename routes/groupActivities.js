@@ -20,7 +20,7 @@ module.exports = function(app,io,socketMap){
       if(found != "false"){
         groupActivity.accept_request(req.body.group_id,req.body.requested_by,function(response){
           console.log(response);
-          callback(response);
+          res.status(200).json(response);
         });
       }
     });
@@ -30,7 +30,7 @@ module.exports = function(app,io,socketMap){
      verifyToken.verify(req.body.token,function(found){
        if(found != "false"){
         groupActivity.deny_request(req.body.group_id,req.body.requested_by,function(response){
-            callback(response);
+            res.status(200).json(response);
         });
        }
 
