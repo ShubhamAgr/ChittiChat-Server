@@ -394,30 +394,7 @@ exports.getArticles = function(topicId,range,callback){
   var final = Number.parseInt(ranges[1]);
   var query = articleModel.find({'topic_id':topicId}).sort('-created_on').select(" article_content published_by created_on content_type").skip(initial).limit(final);
   query.exec(function(err,values){
-  console.log(values);
   callback(values);
-    // var asyncTask = [];
-    // values.forEach(function(item){
-    // var jsonObject  = new Object();
-    // asyncTask.push(function(call){
-
-      // userModel.find({'_id':item.toObject().publishedBy},function(err,users){
-      //   jsonObject._id = item.toObject()._id;
-      //   jsonObject.username = users[0].firstName;
-      //   jsonObject.published_by = item.toObject().publishedBy;
-      //   jsonObject.content_type = item.toObject().content_type;
-      //   jsonObject.article_content = item.toObject().article_content;
-      //   jsonObject.created_on = item.toObject().createdOn;
-      //   responseArray.push(jsonObject);
-      //   call();
-      // });
-
-
-      // });
-    // });
-    // async.parallel(asyncTask,function(){
-    // callback(responseArray);
-    // });
   });
 }
 
