@@ -5,7 +5,7 @@ module.exports = function(app,io,socketMap){
     console.log(req.body.token);
     verifyToken.verify(req.body.token,function(found) {
      if(found != "false") {
-      topicActivity.newTopic(found,req,socketMap,function(response){
+      topicActivity.newTopic(found,req,socketMap,io,function(response){
           res.status(200).json(response);
         });
       }

@@ -13,7 +13,7 @@ var async = require('async');
 var util = require('util');
 var path = require('path');
 
-exports.newTopic = function(userId,req,socket,callback){
+exports.newTopic = function(userId,req,socket,io,callback){
   var id =new mongoose.Types.ObjectId;
   var newTopic = new topicModel({
     _id:mongoose.Types.ObjectId(id),
