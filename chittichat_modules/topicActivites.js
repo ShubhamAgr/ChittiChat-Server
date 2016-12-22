@@ -32,7 +32,7 @@ exports.newTopic = function(userId,req,socket,callback){
       if(err){
         callback({"message":"unsuccessful"});
       }else{
-        // socket.to(req.body.room).emit("newTopic",{"topicId":id,"userId":req.body.userId});
+        io.to(req.body.group_id).emit('newtopic',{"topic_id":id});
         callback({"message":"successful"});
       }
     });
@@ -145,12 +145,11 @@ exports.newImage = function(req,socketMap,callback){
               if(err){
                 callback({"message":"unsuccessful"});
               }else{
-                // io.in(model.group_id).emit('newarticle',{"articleId":imageId});
                 userModel.findByIdAndUpdate(userId,{$addToSet:{"myarticles":imageId},safe:true,upsert:true},function(err){
                   if(err){
                     callback({"message":"unsuccessful"});
                   }else{
-                    socketMap.get("shubham").emit('newarticle',{"articleId":imageId});
+                    io.to(topicId).emit('newarticle',{"articleId":id});
                     callback({"message":"successful"});
                   }
                 });
@@ -349,6 +348,13 @@ exports.getTopics = function(groupId,callback){
    query.exec(function(err,topics){
      callback(topics);
    });
+}
+
+exports.getTopicByTopicId = function(topicId,callback){
+  var query = topicModel.find({'_id':topicId}).select('topic_title _id topic_detail');
+  query.exec(function(err,topic){
+    callback(topics);
+  });
 }
 exports.getTopicsWithArticle = function(groupId,callback){
   var responseArray = new Array();

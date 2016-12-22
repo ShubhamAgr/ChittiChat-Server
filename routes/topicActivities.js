@@ -20,6 +20,15 @@ module.exports = function(app,io,socketMap){
         }
       });
   });
+  app.get("/topicByTopicId/:token/:topicid",function(req,res){
+    verifyToken.verify(req.params.token,function(found){
+      if(found!="false"){
+        topicActivity.getTopicByTopicId(req.params.topicid,function(response){
+          res.status(200).json(response);
+        });
+      }
+    });
+  });
   app.get("/topicsWithArticle/:token/:groupId",function(req,res){
       verifyToken.verify(req.params.token,function(found){
         if(found != "false"){
