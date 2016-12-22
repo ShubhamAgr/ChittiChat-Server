@@ -70,8 +70,7 @@ module.exports = function(app,io,socketMap){
   app.post("/article",function(req,res){
     verifyToken.verify(req.body.token,function(found) {
         if(found != false){
-          console.log(req.body.topic_id+req.body.marticle);
-            topicActivity.newArticle(found,req.body.topic_id,req.body.marticle,socketMap,io,function(response){
+            topicActivity.newArticle(found,req.body.topic_id,req.body.username,req.body.marticle,socketMap,io,function(response){
               res.status(200).json(response);
             });
         }

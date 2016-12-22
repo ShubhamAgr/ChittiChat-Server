@@ -42,12 +42,13 @@ exports.newTopic = function(userId,req,socket,io,callback){
 
 
 
-exports.newArticle = function(userId,topicId,marticle,socketMap,io,callback){
+exports.newArticle = function(userId,topicId,username,marticle,socketMap,io,callback){
  var id = new mongoose.Types.ObjectId;
  var newArticle = new articleModel({
     _id:mongoose.Types.ObjectId(id),
     topic_id:topicId,
     published_by:userId,
+    publisher_name:username,
     created_on:Date.now(),
     article_content:marticle,
     content_type:"texts"
@@ -398,14 +399,14 @@ exports.getArticles = function(topicId,range,callback){
   var ranges = range.split("_");
   var initial = Number.parseInt(ranges[0]);
   var final = Number.parseInt(ranges[1]);
-  var query = articleModel.find({'topic_id':topicId}).sort('-created_on').select(" article_content published_by created_on content_type").skip(initial).limit(final);
+  var query = articleModel.find({'topic_id':topicId}).sort('-created_on').select(" article_content published_by publisher_name created_on content_type").skip(initial).limit(final);
   query.exec(function(err,values){
   callback(values);
   });
 }
 
 exports.getArticleByArticleId = function(articleId,callback){
-  var query = articleModel.find({'_id':articleId}).select("content_type article_content published_by created_on");
+  var query = articleModel.find({'_id':articleId}).select("content_type article_content published_by publisher_name created_on");
   query.exec(function(err,value){
     callback(value);
   });

@@ -6,6 +6,7 @@ var articleSchema = new schema({
   topic_id:{type:String},
   created_on:{type:Date,default:Date.now()},
   published_by:{type:String},
+  publisher_name:{type:String}
   content_type:{type:String},
   article_content:{type:String,default:null},
   upvotes:{type:String},//numberoftimes
