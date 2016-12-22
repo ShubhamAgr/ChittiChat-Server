@@ -353,7 +353,7 @@ exports.getTopics = function(groupId,callback){
 exports.getTopicByTopicId = function(topicId,callback){
   var query = topicModel.find({'_id':topicId}).select('topic_title _id topic_detail');
   query.exec(function(err,topic){
-    callback(topics);
+    callback(topic);
   });
 }
 exports.getTopicsWithArticle = function(groupId,callback){
