@@ -170,6 +170,7 @@ exports.unfollowGroups = function(userId,groupId,callback){
   });
 }
 exports.requests = function(groupId,callback){
+  
   var query = groupModel.find({'_id':groupId}).select('pending_join_requests.by pending_join_requests.knock_knock_answer');
   query.exec(function(err,value){
     callback(value[0].toObject().pending_join_requests);

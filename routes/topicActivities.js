@@ -78,7 +78,7 @@ module.exports = function(app,io,socketMap){
   });
 
   app.post("/image",function(req,res){
-    topicActivity.newImage(req,socketMap,function(response){
+    topicActivity.newImage(req,io,function(response){
         res.status(200).json(response);
     });
   });

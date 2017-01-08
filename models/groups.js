@@ -13,7 +13,7 @@ var groupSchema = new schema({
   followers:[String],
   members:[String],
   isOpen:{type:Boolean,default:true},
-  knock_knock_question:{type:String,default:"Tell us something interesing about yourself."},
+  knock_knock_question:{type:String,default:"Tell us something interesing about yourself?"},
   pending_join_requests:[{
     by:{type:String},
     agreedBy:{type:String},

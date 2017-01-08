@@ -78,7 +78,7 @@ exports.newArticle = function(userId,topicId,username,marticle,socketMap,io,call
 }
 
 
-exports.newImage = function(req,socketMap,callback){
+exports.newImage = function(req,io,callback){
     var count = 0;
     var form = new multiparty.Form();
     var mypath;
@@ -86,6 +86,7 @@ exports.newImage = function(req,socketMap,callback){
     var mytoken;
     var topicId;
     var userId;
+    var username;
 
     form.on('error',function(err){
       console.log("ERROR");
@@ -116,6 +117,8 @@ exports.newImage = function(req,socketMap,callback){
         userId = decoded.foo;
       }else if(name=='topicId'){
         topicId = value;
+      }else if(name =='username') {
+        username = value;
       }
     });
     form.on('file',function(name,value){
@@ -135,8 +138,10 @@ exports.newImage = function(req,socketMap,callback){
           _id:mongoose.Types.ObjectId(imageId),
           topic_id:topicId,
           article_content:imageId,
+          created_on:Date.now(),
           content_type:"image",
           publishedBy:userId,
+          publisher_name:username
           });
           newArticle.save(function(err,newArticle){
             if(err){
@@ -150,7 +155,7 @@ exports.newImage = function(req,socketMap,callback){
                   if(err){
                     callback({"message":"unsuccessful"});
                   }else{
-                    io.to(topicId).emit('newarticle',{"articleId":id});
+                    io.to(topicId).emit('newarticle',{"articleId":imageId});
                     callback({"message":"successful"});
                   }
                 });
@@ -410,6 +415,10 @@ exports.getArticleByArticleId = function(articleId,callback){
   query.exec(function(err,value){
     callback(value);
   });
+
+}
+
+exports.deleteArticle = function(articleId,callback){
 
 }
 exports.getUsernameByUserId = function(userId,callback){
