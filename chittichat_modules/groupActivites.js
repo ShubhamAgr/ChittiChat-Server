@@ -126,8 +126,8 @@ exports.updateknock_knockQuestion = function(){
 exports.changeGroupName = function(){
 
 }
-exports.addNewRequest = function(userId,groupId,knock_knock_answer,callback){
-    var newRequests = {"by":userId,"knock_knock_answer":knock_knock_answer};
+exports.addNewRequest = function(userId,username,groupId,knock_knock_answer,callback){
+    var newRequests = {"by":userId,"username":username,"knock_knock_answer":knock_knock_answer};
     groupModel.findOneAndUpdate({'_id':groupId},{$addToSet:{"pending_join_requests":newRequests}},{safe:true,upsert:true},function(err,groups){
     if(err){
       callback({"message":"unsuccessful"});
@@ -170,7 +170,7 @@ exports.unfollowGroups = function(userId,groupId,callback){
   });
 }
 exports.requests = function(groupId,callback){
-  
+
   var query = groupModel.find({'_id':groupId}).select('pending_join_requests.by pending_join_requests.knock_knock_answer');
   query.exec(function(err,value){
     callback(value[0].toObject().pending_join_requests);

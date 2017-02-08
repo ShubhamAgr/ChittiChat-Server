@@ -384,8 +384,6 @@ exports.getTopicsWithArticle = function(groupId,callback){
               jsonObject.content_type = articles[0].toObject().content_type;
             }
             responseArray.push(jsonObject);
-            // JsonObject
-            // console.log(values);
             call();
           });
         });
@@ -419,6 +417,13 @@ exports.getArticleByArticleId = function(articleId,callback){
 }
 
 exports.deleteArticle = function(articleId,callback){
+var query = articleModel.remove({'_id':articleId});
+query.exec(function(err,response){
+  console.log(response);
+  callback();
+});
+}
+exports.deleteTopic = function(topicId,callback){
 
 }
 exports.getUsernameByUserId = function(userId,callback){
@@ -428,5 +433,13 @@ exports.getUsernameByUserId = function(userId,callback){
     var obj = new Object();
     obj.username=value[0].toObject().firstName;
     callback(obj);
+  });
+}
+
+exports.getGroupNotificationCount = function(groupId,callback){
+  var query = groupModel.find({'_id':groupId}).select("pending_join_requests");
+  query.exec(function(err,value){
+    var count  = value[0].toObject().pending_join_requests.length;
+    callback({"message":count});
   });
 }

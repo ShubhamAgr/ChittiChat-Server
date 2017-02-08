@@ -16,6 +16,7 @@ var userSchema = new schema({
   profile_Pic_url :{type:String,default:"default"},
   status : {type:String,default:"chitti chitti chat chat"},
   interests : [String],
+  Likes:[String],
   groups:[{
     _id:id,
     role:{type:String}//follower,admin, member.

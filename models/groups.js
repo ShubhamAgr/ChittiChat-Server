@@ -16,6 +16,7 @@ var groupSchema = new schema({
   knock_knock_question:{type:String,default:"Tell us something interesing about yourself?"},
   pending_join_requests:[{
     by:{type:String},
+    username:{type:String},
     agreedBy:{type:String},
     disagreedBy:{type:String},
     knock_knock_answer:{type:String}

@@ -77,6 +77,17 @@ module.exports = function(app,io,socketMap){
       });
   });
 
+  app.get("/deleteArticle/:article_id",function(req,res){
+    topicActivity.deleteArticle(req.params.article_id,function(response){
+       res.status(200).json(response);
+    });
+  });
+  app.get("/groupNotificationCount/:group_id",function(req,res){
+      topicActivity.getGroupNotificationCount(req.params.group_id,function(response){
+        
+        res.status(200).json(response);
+      });
+  });
   app.post("/image",function(req,res){
     topicActivity.newImage(req,io,function(response){
         res.status(200).json(response);

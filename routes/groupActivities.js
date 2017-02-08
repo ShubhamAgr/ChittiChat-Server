@@ -39,7 +39,7 @@ module.exports = function(app,io,socketMap){
   app.post('/newRequest',function(req,res){
       verifyToken.verify(req.body.token,function(found){
         if(found != "false") {
-          groupActivity.addNewRequest(found,req.body.group_id,req.body.answer,function(response){
+          groupActivity.addNewRequest(found,req.body.group_id,req.body.username,req.body.answer,function(response){
             res.status(200).json(response);
           });
         }
