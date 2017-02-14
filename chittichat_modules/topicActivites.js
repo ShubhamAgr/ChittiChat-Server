@@ -419,8 +419,8 @@ exports.getArticleByArticleId = function(articleId,callback){
 exports.deleteArticle = function(articleId,callback){
 var query = articleModel.remove({'_id':articleId});
 query.exec(function(err,response){
-  console.log(response);
-  callback();
+  // console.log(response);
+  callback({"message":"successful"});
 });
 }
 exports.deleteTopic = function(topicId,callback){

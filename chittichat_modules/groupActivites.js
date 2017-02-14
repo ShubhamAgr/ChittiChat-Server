@@ -126,10 +126,14 @@ exports.updateknock_knockQuestion = function(){
 exports.changeGroupName = function(){
 
 }
-exports.addNewRequest = function(userId,username,groupId,knock_knock_answer,callback){
+exports.addNewRequest = function(userId,groupId,username,knock_knock_answer,callback){
+
+  console.log(username);
+
     var newRequests = {"by":userId,"username":username,"knock_knock_answer":knock_knock_answer};
     groupModel.findOneAndUpdate({'_id':groupId},{$addToSet:{"pending_join_requests":newRequests}},{safe:true,upsert:true},function(err,groups){
     if(err){
+      console.log(err);
       callback({"message":"unsuccessful"});
 
     } else {
@@ -159,7 +163,7 @@ exports.unfollowGroups = function(userId,groupId,callback){
     if(err){
       callback({"message":"unsuccessful"});
     }else{
-      groupModel.findByIdAndUpdate(groupId,{$pull:{"followers":req.body.userId}},{safe:true,upsert:true},function(err){
+      groupModel.findByIdAndUpdate(groupId,{$pull:{"followers":userId}},{safe:true,upsert:true},function(err){
         if(err){
           callback({"message":"unsuccessful"});
         }else{
@@ -170,8 +174,7 @@ exports.unfollowGroups = function(userId,groupId,callback){
   });
 }
 exports.requests = function(groupId,callback){
-
-  var query = groupModel.find({'_id':groupId}).select('pending_join_requests.by pending_join_requests.knock_knock_answer');
+var query = groupModel.find({'_id':groupId}).select('pending_join_requests.by pending_join_requests.knock_knock_answer pending_join_requests.username');
   query.exec(function(err,value){
     callback(value[0].toObject().pending_join_requests);
   });

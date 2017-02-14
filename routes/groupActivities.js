@@ -40,6 +40,7 @@ module.exports = function(app,io,socketMap){
       verifyToken.verify(req.body.token,function(found){
         if(found != "false") {
           groupActivity.addNewRequest(found,req.body.group_id,req.body.username,req.body.answer,function(response){
+            console.log(response);
             res.status(200).json(response);
           });
         }

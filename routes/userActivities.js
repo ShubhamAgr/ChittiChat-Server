@@ -39,7 +39,7 @@ module.exports = function(app,io,socketMap){
     });
     app.get('/getCurrentVersionCode/:version_code',function(req,res){
       var users_version_code = req.params.version_code;
-      var current_version_code = 3;
+      var current_version_code = 5;
       var force_update = false;
       res.status(200).json({"current_version_code":current_version_code,"force_update":force_update});
     });
