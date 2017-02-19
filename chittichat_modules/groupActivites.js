@@ -12,6 +12,7 @@ exports.newgroup = function(userId,req,callback){
     _id:mongoose.Types.ObjectId(id),
     group_name:req.body.group_name,
     group_admin:userId,//can give problem
+    users:{_id:mongoose.Types.ObjectId(userId),"role":"administrator"},
     group_about:req.body.group_introduction,
     group_category:req.body.group_category,
     knock_knock_question:req.body.knock_knock_question
@@ -29,6 +30,17 @@ exports.newgroup = function(userId,req,callback){
         }
         });
       }
+    });
+  }
+  exports.getGroups = function(range,callback){
+    //range will be in format of 10_12
+    // var responseArray = new Array();
+    var ranges = range.split("_");
+    var initial = Number.parseInt(ranges[0]);
+    var final = Number.parseInt(ranges[1]);
+    var query = groupModel.find().sort('-created_on').select("group_name group_about group_category knock_knock_question").skip(initial).limit(final);
+    query.exec(function(err,values){
+    callback(values);
     });
   }
 exports.groupDetail = function(groupId,callback){
@@ -128,8 +140,6 @@ exports.changeGroupName = function(){
 }
 exports.addNewRequest = function(userId,groupId,username,knock_knock_answer,callback){
 
-  console.log(username);
-
     var newRequests = {"by":userId,"username":username,"knock_knock_answer":knock_knock_answer};
     groupModel.findOneAndUpdate({'_id':groupId},{$addToSet:{"pending_join_requests":newRequests}},{safe:true,upsert:true},function(err,groups){
     if(err){
@@ -147,7 +157,8 @@ exports.followGroups = function(userId,groupId,callback){
      if(err){
        callback({"message":"unsuccessful"});
      }else{
-       groupModel.findByIdAndUpdate(groupId,{$addToSet:{"followers":userId}},{safe:true,upsert:true},function(err){
+      //  groupModel.findByIdAndUpdate(groupId,{$addToSet:{"followers":userId}},{safe:true,upsert:true},function(err){
+      groupModel.findByIdAndUpdate(groupId,{$addToSet:{"users":{_id:mongoose.Types.ObjectId(userId),"role":"follower"}}},{safe:true,upsert:true},function(err){
          if(err){
            callback({"message":"unsuccessful"});
          }else{
@@ -163,7 +174,8 @@ exports.unfollowGroups = function(userId,groupId,callback){
     if(err){
       callback({"message":"unsuccessful"});
     }else{
-      groupModel.findByIdAndUpdate(groupId,{$pull:{"followers":userId}},{safe:true,upsert:true},function(err){
+      // groupModel.findByIdAndUpdate(groupId,{$pull:{"followers":userId}},{safe:true,upsert:true},function(err){
+groupModel.findByIdAndUpdate(groupId,{$pull:{"users":{_id:mongoose.Types.ObjectId(userId)}}},{safe:true,upsert:true},function(err){
         if(err){
           callback({"message":"unsuccessful"});
         }else{
@@ -184,7 +196,7 @@ exports.accept_request = function(groupId,requestedBy,callback){
     if(err){
       callback({"message":"unsuccessful"});
     }else{
-      groupModel.findByIdAndUpdate(groupId,{$addToSet:{"members":userId}},{safe:true,upsert:true},function(err){
+      groupModel.findByIdAndUpdate(groupId,{$addToSet:{"users":{_id:mongoose.Types.ObjectId(requestedBy),"role":"member"}}},{safe:true,upsert:true},function(err){
         if(err){
           callback({"message":"unsuccessful"});
         }else{

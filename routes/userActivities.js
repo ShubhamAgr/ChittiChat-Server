@@ -40,7 +40,15 @@ module.exports = function(app,io,socketMap){
     app.get('/getCurrentVersionCode/:version_code',function(req,res){
       var users_version_code = req.params.version_code;
       var current_version_code = 5;
-      var force_update = false;
+      var force_update = true;
       res.status(200).json({"current_version_code":current_version_code,"force_update":force_update});
+    });
+
+    app.get('/getSharingInfo',function(req,res){
+      var ref = "abcdefghijklmn";
+      var content_description ="Hello there, Follow my Group";
+      var content_title = "ChittiChat -Android Application";
+      var content_uri = "https://play.google.com/store/apps/details?id=in.co.nerdoo.com.chittichat.chittichat";
+      res.status(200).json({"ref":ref,"content_description":content_description,"content_title":content_title,"content_uri":content_uri});
     });
 }

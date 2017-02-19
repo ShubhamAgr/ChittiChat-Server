@@ -14,7 +14,12 @@ module.exports = function(app,io,socketMap){
     });
 
   });
-
+app.get('/getGroups/:range',function(req,res){
+  groupActivity.getGroups(req.params.range,function(response){
+    console.log(response);
+    res.status(200).json(response);
+  });
+});
   app.post('/accept_request',function(req,res){
     verifyToken.verify(req.body.token,function(found){
       if(found != "false"){

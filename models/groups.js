@@ -10,6 +10,10 @@ var groupSchema = new schema({
   group_about:{type:String,default:"Awsome Group By Awsome People"},
   group_category:{type:String,default:"misc"},
   group_topics:[String],
+  users:[{
+    _id:id,
+    role:{type:String}//follower,admin, member.
+  }],
   followers:[String],
   members:[String],
   isOpen:{type:Boolean,default:true},
