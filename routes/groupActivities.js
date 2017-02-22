@@ -20,6 +20,12 @@ app.get('/getGroups/:range',function(req,res){
     res.status(200).json(response);
   });
 });
+
+app.get('/getGroupExists/:group_name',function(req,res){
+  groupActivity.isGroupExists(req.params.group_name,function(response){
+    res.status(200).json(response);
+  });
+});
   app.post('/accept_request',function(req,res){
     verifyToken.verify(req.body.token,function(found){
       if(found != "false"){

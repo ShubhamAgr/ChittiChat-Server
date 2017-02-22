@@ -32,6 +32,16 @@ exports.newgroup = function(userId,req,callback){
       }
     });
   }
+
+  exports.isGroupExists = function(group_name,callback) {
+    groupModel.find({'group_name':group_name},function(err,group){
+      if(group.length != 0) {
+        callback({"message":"true"});
+      }else{
+        callback({"message":"false"});
+      }
+    });
+  }
   exports.getGroups = function(range,callback){
     //range will be in format of 10_12
     // var responseArray = new Array();
