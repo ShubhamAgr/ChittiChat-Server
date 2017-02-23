@@ -149,7 +149,14 @@ exports.changeGroupName = function(){
 
 }
 exports.addNewRequest = function(userId,groupId,username,knock_knock_answer,callback){
-
+  userModel.find({'_id':userId},function(err,user){
+    var userObject = user[0].toObject();
+    for(var i=0;i<userObject.groups.length;i++){
+      if((userObject.groups[i]._id==groupId && userObject.groups[i].role == "administrator")||(userObject.groups[i]._id==groupId && userObject.groups[i].role == "member")){
+        console.log(userObject.groups[i]._id);
+        callback({"message":"unsuccessful"});
+        break;
+      }else if(i==userObject.groups.length-1){
     var newRequests = {"by":userId,"username":username,"knock_knock_answer":knock_knock_answer};
     groupModel.findOneAndUpdate({'_id':groupId},{$addToSet:{"pending_join_requests":newRequests}},{safe:true,upsert:true},function(err,groups){
     if(err){
@@ -162,23 +169,35 @@ exports.addNewRequest = function(userId,groupId,username,knock_knock_answer,call
     }
   });
 }
-exports.followGroups = function(userId,groupId,callback){
-   userModel.findByIdAndUpdate(userId,{$addToSet:{"groups":{_id:mongoose.Types.ObjectId(groupId),"role":"follower"}}},{safe:true,upsert:true},function(err){
-     if(err){
-       callback({"message":"unsuccessful"});
-     }else{
-      //  groupModel.findByIdAndUpdate(groupId,{$addToSet:{"followers":userId}},{safe:true,upsert:true},function(err){
-      groupModel.findByIdAndUpdate(groupId,{$addToSet:{"users":{_id:mongoose.Types.ObjectId(userId),"role":"follower"}}},{safe:true,upsert:true},function(err){
-         if(err){
-           callback({"message":"unsuccessful"});
-         }else{
-           callback({"message":"successful"});
-         }
-       });
-     }
-   });
 }
-
+});
+}
+exports.followGroups = function(userId,groupId,callback){
+  userModel.find({'_id':userId},function(err,user){
+    var userObject = user[0].toObject();
+    for(var i=0;i<userObject.groups.length;i++){
+      if(userObject.groups[i]._id==groupId){
+        console.log(userObject.groups[i]._id);
+        callback({"message":"unsuccessful"});
+        break;
+      }else if(i==userObject.groups.length-1){
+        userModel.findByIdAndUpdate(userId,{$addToSet:{"groups":{_id:mongoose.Types.ObjectId(groupId),"role":"follower"}}},{safe:true,upsert:true},function(err){
+          if(err){
+            callback({"message":"unsuccessful"});
+          }else{
+           groupModel.findByIdAndUpdate(groupId,{$addToSet:{"users":{_id:mongoose.Types.ObjectId(userId),"role":"follower"}}},{safe:true,upsert:true},function(err){
+              if(err){
+                callback({"message":"unsuccessful"});
+              }else{
+                callback({"message":"successful"});
+              }
+            });
+          }
+       });
+      }
+    }
+  });
+}
 exports.unfollowGroups = function(userId,groupId,callback){
   userModel.findByIdAndUpdate(userId,{$pull:{"groups":{_id:mongoose.Types.ObjectId(groupId)}}},{safe:true,upsert:true},function(err){
     if(err){
@@ -202,6 +221,27 @@ var query = groupModel.find({'_id':groupId}).select('pending_join_requests.by pe
   });
 }
 exports.accept_request = function(groupId,requestedBy,callback){
+  userModel.find({'_id':userId},function(err,user){
+    var userObject = user[0].toObject();
+    for(var i=0;i<userObject.groups.length;i++){
+      if(userObject.groups[i]._id==groupId && userObject.groups[i].role == "follower"){
+        console.log(userObject.groups[i]._id);
+        userModel.findByIdAndUpdate(userId,{$pull:{"groups":{_id:mongoose.Types.ObjectId(groupId),"role":"follower"}}},{safe:true,upsert:true},function(err){
+          if(err){
+
+          }else{
+
+        groupModel.findByIdAndUpdate(groupId,{$pull:{"users":{_id:mongoose.Types.ObjectId(userId),"role":"follower"}}},{safe:true,upsert:true},function(err){
+              if(err){
+
+              }
+            });
+          }
+        });
+        break;
+      }
+    }
+  });
   userModel.findByIdAndUpdate(requestedBy,{$addToSet:{"groups":{_id:mongoose.Types.ObjectId(groupId),"role":"member"}}},{safe:true,upsert:true},function(err){
     if(err){
       callback({"message":"unsuccessful"});

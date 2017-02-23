@@ -4,7 +4,7 @@ var id = mongoose.Schema.Types.ObjectId;
 
 var groupSchema = new schema({
   _id:id,
-  group_name:{type:String},
+  group_name:{type:String,unique:true},
   group_admin:[String],
   group_profilePicture:{type:String,default:"default"},
   group_about:{type:String,default:"Awsome Group By Awsome People"},
