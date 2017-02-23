@@ -34,7 +34,8 @@ exports.newgroup = function(userId,req,callback){
   }
 
   exports.isGroupExists = function(group_name,callback) {
-    groupModel.find({'group_name':group_name},function(err,group){
+
+    groupModel.find({'group_name':new RegExp('\\b' + group_name + '\\b', 'i')},function(err,group){
       if(group.length != 0) {
         callback({"message":"true"});
       }else{
