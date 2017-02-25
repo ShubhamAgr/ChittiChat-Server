@@ -222,7 +222,7 @@ var query = groupModel.find({'_id':groupId}).select('pending_join_requests.by pe
   });
 }
 exports.accept_request = function(groupId,requestedBy,callback){
-  userModel.find({'_id':userId},function(err,user){
+  userModel.find({'_id':requestedBy},function(err,user){
     var userObject = user[0].toObject();
     for(var i=0;i<userObject.groups.length;i++){
       if(userObject.groups[i]._id==groupId && userObject.groups[i].role == "follower"){
@@ -232,7 +232,7 @@ exports.accept_request = function(groupId,requestedBy,callback){
 
           }else{
 
-        groupModel.findByIdAndUpdate(groupId,{$pull:{"users":{_id:mongoose.Types.ObjectId(userId),"role":"follower"}}},{safe:true,upsert:true},function(err){
+        groupModel.findByIdAndUpdate(groupId,{$pull:{"users":{_id:mongoose.Types.ObjectId(requestedBy),"role":"follower"}}},{safe:true,upsert:true},function(err){
               if(err){
 
               }
