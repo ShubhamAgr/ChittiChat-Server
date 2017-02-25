@@ -8,10 +8,10 @@ var jwt = require('jsonwebtoken');
 var path = require('path');
 exports.newgroup = function(userId,req,callback){
   var id = new mongoose.Types.ObjectId;
-  groupModel.find({'group_name':new RegExp('\\b' + group_name + '\\b', 'i')},function(err,group){
-    if(group == undefined) {
-    //   callback({"message":"unsuccessful","_id":"err"});
-    // }else{
+  // groupModel.find({'group_name':new RegExp('\\b' + group_name + '\\b', 'i')},function(err,group){
+  //   if(group.length != 0) {
+  //     callback({"message":"true"});
+  //   }else{
 
   var newGroup = new groupModel({
     _id:mongoose.Types.ObjectId(id),
@@ -36,9 +36,9 @@ exports.newgroup = function(userId,req,callback){
         });
       }
     });
-  }
+  // }
 });
-}
+  }
 
   exports.isGroupExists = function(group_name,callback) {
 
