@@ -227,43 +227,88 @@ exports.accept_request = function(groupId,requestedBy,callback){
     for(var i=0;i<userObject.groups.length;i++){
       if(userObject.groups[i]._id==groupId && userObject.groups[i].role == "follower"){
         console.log(userObject.groups[i]._id);
-        userModel.findByIdAndUpdate(userId,{$pull:{"groups":{_id:mongoose.Types.ObjectId(groupId),"role":"follower"}}},{safe:true,upsert:true},function(err){
+        userModel.findByIdAndUpdate(userId,{$pull:{"groups":{_id:mongoose.Types.ObjectId(groupId)}}},{safe:true,upsert:true},function(err){
           if(err){
 
           }else{
-
-        groupModel.findByIdAndUpdate(groupId,{$pull:{"users":{_id:mongoose.Types.ObjectId(requestedBy),"role":"follower"}}},{safe:true,upsert:true},function(err){
+          groupModel.findByIdAndUpdate(groupId,{$pull:{"users":{_id:mongoose.Types.ObjectId(requestedBy)}}},{safe:true,upsert:true},function(err){
               if(err){
+
+              }else{
+
+                userModel.findByIdAndUpdate(requestedBy,{$addToSet:{"groups":{_id:mongoose.Types.ObjectId(groupId),"role":"member"}}},{safe:true,upsert:true},function(err){
+                  if(err){
+                    callback({"message":"unsuccessful"});
+                  }else{
+                    groupModel.findByIdAndUpdate(groupId,{$addToSet:{"users":{_id:mongoose.Types.ObjectId(requestedBy),"role":"member"}}},{safe:true,upsert:true},function(err){
+                      if(err){
+                        callback({"message":"unsuccessful"});
+                      }else{
+                        var deleteRequests = {"by":requestedBy};
+                        groupModel.findByIdAndUpdate(groupId,{$pull:{"pending_join_requests":deleteRequests}},{safe:true,upsert:true},function(err){
+                          if(err){
+                            callback({"message":"unsuccessful"});
+                          }else{
+                            callback({"message":"successful"});
+                          };
+                      });
+                    }
+
+                });
+              }
+              });
 
               }
             });
           }
         });
         break;
+      }else if(i==userObject.groups.length-1){
+        userModel.findByIdAndUpdate(requestedBy,{$addToSet:{"groups":{_id:mongoose.Types.ObjectId(groupId),"role":"member"}}},{safe:true,upsert:true},function(err){
+          if(err){
+            callback({"message":"unsuccessful"});
+          }else{
+            groupModel.findByIdAndUpdate(groupId,{$addToSet:{"users":{_id:mongoose.Types.ObjectId(requestedBy),"role":"member"}}},{safe:true,upsert:true},function(err){
+              if(err){
+                callback({"message":"unsuccessful"});
+              }else{
+                var deleteRequests = {"by":requestedBy};
+                groupModel.findByIdAndUpdate(groupId,{$pull:{"pending_join_requests":deleteRequests}},{safe:true,upsert:true},function(err){
+                  if(err){
+                    callback({"message":"unsuccessful"});
+                  }else{
+                    callback({"message":"successful"});
+                  };
+              });
+            }
+
+        });
+      }
+      });
       }
     }
   });
-  userModel.findByIdAndUpdate(requestedBy,{$addToSet:{"groups":{_id:mongoose.Types.ObjectId(groupId),"role":"member"}}},{safe:true,upsert:true},function(err){
-    if(err){
-      callback({"message":"unsuccessful"});
-    }else{
-      groupModel.findByIdAndUpdate(groupId,{$addToSet:{"users":{_id:mongoose.Types.ObjectId(requestedBy),"role":"member"}}},{safe:true,upsert:true},function(err){
-        if(err){
-          callback({"message":"unsuccessful"});
-        }else{
-          var deleteRequests = {"by":requestedBy};
-          groupModel.findByIdAndUpdate(groupId,{$pull:{"pending_join_requests":deleteRequests}},{safe:true,upsert:true},function(err){
-            if(err){
-              callback({"message":"unsuccessful"});
-            }else{
-              callback({"message":"successful"});
-            };
-        });
-      }
-
-  });
-}
-});
+//   userModel.findByIdAndUpdate(requestedBy,{$addToSet:{"groups":{_id:mongoose.Types.ObjectId(groupId),"role":"member"}}},{safe:true,upsert:true},function(err){
+//     if(err){
+//       callback({"message":"unsuccessful"});
+//     }else{
+//       groupModel.findByIdAndUpdate(groupId,{$addToSet:{"users":{_id:mongoose.Types.ObjectId(requestedBy),"role":"member"}}},{safe:true,upsert:true},function(err){
+//         if(err){
+//           callback({"message":"unsuccessful"});
+//         }else{
+//           var deleteRequests = {"by":requestedBy};
+//           groupModel.findByIdAndUpdate(groupId,{$pull:{"pending_join_requests":deleteRequests}},{safe:true,upsert:true},function(err){
+//             if(err){
+//               callback({"message":"unsuccessful"});
+//             }else{
+//               callback({"message":"successful"});
+//             };
+//         });
+//       }
+//
+//   });
+// }
+// });
 }
 exports.deny_request = function(groupId,requestedBy,callback){
   var deleteRequests = {"by":requestedBy};
