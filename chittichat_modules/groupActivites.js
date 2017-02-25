@@ -37,7 +37,7 @@ exports.newgroup = function(userId,req,callback){
       }
     });
   // }
-});
+// });
   }
 
   exports.isGroupExists = function(group_name,callback) {
