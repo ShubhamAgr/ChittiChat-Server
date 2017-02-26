@@ -135,7 +135,7 @@ exports.updateGroupPicture =  function(req,callback){
             console.log(err);
             callback({"message":"unsuccessful"});
         }else{
-          groupModel.findByIdAndUpdate(groupId,{"group_profilePicture":groupId},{safe:true,upsert:true},function(err){
+          groupModel.findByIdAndUpdate(groupId,{"group_profile_picture":groupId},{safe:true,upsert:true},function(err){
             if(err){
               callback({"message":"unsuccessful"});
             }else{

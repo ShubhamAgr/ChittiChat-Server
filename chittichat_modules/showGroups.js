@@ -14,7 +14,7 @@ module.exports = function(userId,callback) {
       groupsObject.forEach(function(item){
         asyncTask.push(function(call){
           console.log(item._id);
-          var query = groupModel.find({'_id':item._id}).select("group_name group_profilePicture group_about group_category");
+          var query = groupModel.find({'_id':item._id}).select("group_name group_profile_picture group_about group_category");
           query.exec(function(err,value){
             var jsonObject  = new Object();
             jsonObject = value[0].toObject();

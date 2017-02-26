@@ -6,7 +6,7 @@ var groupSchema = new schema({
   _id:id,
   group_name:{type:String,unique:true},
   group_admin:[String],
-  group_profilePicture:{type:String,default:"default"},
+  group_profile_picture:{type:String,default:"default"},
   group_about:{type:String,default:"Awsome Group By Awsome People"},
   group_category:{type:String,default:"misc"},
   group_topics:[String],
