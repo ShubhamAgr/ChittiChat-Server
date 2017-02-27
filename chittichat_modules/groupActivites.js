@@ -264,7 +264,9 @@ exports.accept_request = function(groupId,requestedBy,callback){
     var userObject = user[0].toObject();
     if(userObject.groups.length != 0){
     for(var i=0;i<userObject.groups.length;i++){
-      if(userObject.groups[i]._id==mongoose.Types.ObjectId(groupId) && userObject.groups[i].role == "follower"){
+      console.log(userObject.groups[i]._id);
+      console.log(userObject.groups[i]._id==groupId);
+      if(userObject.groups[i]._id==groupId && userObject.groups[i].role == "follower"){
         console.log(userObject.groups[i]._id);
         userModel.findByIdAndUpdate(userId,{$pull:{"groups":{_id:mongoose.Types.ObjectId(groupId)}}},{safe:true,upsert:true},function(err){
           if(err){
