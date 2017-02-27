@@ -159,6 +159,7 @@ exports.changeGroupName = function(){
 exports.addNewRequest = function(userId,groupId,username,knock_knock_answer,callback){
   userModel.find({'_id':userId},function(err,user){
     var userObject = user[0].toObject();
+    if(userObject.groups.length != 0){
     for(var i=0;i<userObject.groups.length;i++){
       if((userObject.groups[i]._id==groupId && userObject.groups[i].role == "administrator")||(userObject.groups[i]._id==groupId && userObject.groups[i].role == "member")){
         console.log(userObject.groups[i]._id);
@@ -178,11 +179,25 @@ exports.addNewRequest = function(userId,groupId,username,knock_knock_answer,call
   });
 }
 }
+}else{
+  var newRequests = {"by":userId,"username":username,"knock_knock_answer":knock_knock_answer};
+  groupModel.findOneAndUpdate({'_id':groupId},{$addToSet:{"pending_join_requests":newRequests}},{safe:true,upsert:true},function(err,groups){
+  if(err){
+    console.log(err);
+    callback({"message":"unsuccessful"});
+
+  } else {
+    //find all the admin and for each socket.emit the new join request ...
+    callback({"message":"successful"});
+  }
+});
+}
 });
 }
 exports.followGroups = function(userId,groupId,callback){
   userModel.find({'_id':userId},function(err,user){
     var userObject = user[0].toObject();
+    if(userObject.groups.length != 0){
     for(var i=0;i<userObject.groups.length;i++){
       if(userObject.groups[i]._id==groupId){
         console.log(userObject.groups[i]._id);
@@ -204,6 +219,22 @@ exports.followGroups = function(userId,groupId,callback){
        });
       }
     }
+  }else{
+    userModel.findByIdAndUpdate(userId,{$addToSet:{"groups":{_id:mongoose.Types.ObjectId(groupId),"role":"follower"}}},{safe:true,upsert:true},function(err){
+      if(err){
+        callback({"message":"unsuccessful"});
+      }else{
+       groupModel.findByIdAndUpdate(groupId,{$addToSet:{"users":{_id:mongoose.Types.ObjectId(userId),"role":"follower"}}},{safe:true,upsert:true},function(err){
+          if(err){
+            callback({"message":"unsuccessful"});
+          }else{
+            callback({"message":"successful"});
+          }
+        });
+      }
+   });
+
+  }
   });
 }
 exports.unfollowGroups = function(userId,groupId,callback){
@@ -231,6 +262,7 @@ var query = groupModel.find({'_id':groupId}).select('pending_join_requests.by pe
 exports.accept_request = function(groupId,requestedBy,callback){
   userModel.find({'_id':requestedBy},function(err,user){
     var userObject = user[0].toObject();
+    if(userObject.groups.length != 0){
     for(var i=0;i<userObject.groups.length;i++){
       if(userObject.groups[i]._id==groupId){
         console.log(userObject.groups[i]._id);
@@ -293,6 +325,28 @@ exports.accept_request = function(groupId,requestedBy,callback){
       }
       });
       }
+    }}else{
+      userModel.findByIdAndUpdate(requestedBy,{$addToSet:{"groups":{_id:mongoose.Types.ObjectId(groupId),"role":"member"}}},{safe:true,upsert:true},function(err){
+        if(err){
+          callback({"message":"unsuccessful"});
+        }else{
+          groupModel.findByIdAndUpdate(groupId,{$addToSet:{"users":{_id:mongoose.Types.ObjectId(requestedBy),"role":"member"}}},{safe:true,upsert:true},function(err){
+            if(err){
+              callback({"message":"unsuccessful"});
+            }else{
+              var deleteRequests = {"by":requestedBy};
+              groupModel.findByIdAndUpdate(groupId,{$pull:{"pending_join_requests":deleteRequests}},{safe:true,upsert:true},function(err){
+                if(err){
+                  callback({"message":"unsuccessful"});
+                }else{
+                  callback({"message":"successful"});
+                };
+            });
+          }
+
+      });
+    }
+    });
     }
   });
 //   userModel.findByIdAndUpdate(requestedBy,{$addToSet:{"groups":{_id:mongoose.Types.ObjectId(groupId),"role":"member"}}},{safe:true,upsert:true},function(err){
