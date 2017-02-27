@@ -264,7 +264,7 @@ exports.accept_request = function(groupId,requestedBy,callback){
     var userObject = user[0].toObject();
     if(userObject.groups.length != 0){
     for(var i=0;i<userObject.groups.length;i++){
-      if(userObject.groups[i]._id==mongoose.Types.ObjectId(groupId)){
+      if(userObject.groups[i]._id==groupId && userObject.groups[i].role == "follower"){
         console.log(userObject.groups[i]._id);
         userModel.findByIdAndUpdate(userId,{$pull:{"groups":{_id:mongoose.Types.ObjectId(groupId)}}},{safe:true,upsert:true},function(err){
           if(err){
@@ -302,7 +302,7 @@ exports.accept_request = function(groupId,requestedBy,callback){
           }
         });
         break;
-      }else if(i==userObject.groups.length-1){
+      }else if(i==(userObject.groups.length-1)){
         userModel.findByIdAndUpdate(requestedBy,{$addToSet:{"groups":{_id:mongoose.Types.ObjectId(groupId),"role":"member"}}},{safe:true,upsert:true},function(err){
           if(err){
             callback({"message":"unsuccessful"});
