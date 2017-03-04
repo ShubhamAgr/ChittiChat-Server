@@ -81,6 +81,9 @@ module.exports = function(app,io,socketMap){
         console.log("Socket disconnected");
 
     });
+    socket.on('notification',function(body){
+      socket.emit('notification',{"notification":"this is notification"});
+    });
     socket.on('app_close',function(body){
       if(body.token != "null"){
         var decoded = jwt.verify(body.token,'abcdefghijklmnopqr/123@!@#$%');
