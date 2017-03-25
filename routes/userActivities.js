@@ -40,7 +40,7 @@ module.exports = function(app,io,socketMap){
     app.get('/getCurrentVersionCode/:version_code',function(req,res){
       var force_update = false;
       var users_version_code = parseInt(req.params.version_code);
-      var current_version_code = 5;
+      var current_version_code = 6;
       if(users_version_code<current_version_code){
       force_update = true;
       }
