@@ -6,8 +6,9 @@ module.exports = function(app,io,socketMap){
   io.use(middleware);
   io.on('connection',function(socket){
       console.log("socket connected");
+      console.log(socket.id);
     // socket.emit('true');
-    // socketMap.set("shubham",socket);
+    socketMap.set("shubham",socket.id);
     // console.log(socketMap.get("shubham"));
     roomActivity(io,socket,socketMap);
 
@@ -16,7 +17,8 @@ module.exports = function(app,io,socketMap){
         var decoded = jwt.verify(body.token,'abcdefghijklmnopqr/123@!@#$%');
         console.log(decoded.foo)
         userId = decoded.foo;
-        socketMap.set(userId,socket);
+        socketMap[userId] = socket.id;
+        // socketMap.set(userId,socket.id);//socket);
         console.log("socket added to map");
         // console.log(socketMap.get(userId));
       }
@@ -77,7 +79,7 @@ module.exports = function(app,io,socketMap){
     //   socket.emit("error",{"Response":"404"});
     // });
 
-    socket.on('disconnect',function(body){
+    socket.once('disconnect',function(body){
         console.log("Socket disconnected");
 
     });
@@ -89,8 +91,9 @@ module.exports = function(app,io,socketMap){
         var decoded = jwt.verify(body.token,'abcdefghijklmnopqr/123@!@#$%');
         console.log(decoded.foo)
         userId = decoded.foo;
-        socketMap.delete(userId);
-        console.log("Socket disconnected");
+        socketMap[userId] = undefined;
+        // socketMap.delete(userId);
+        console.log("socket map user removed");
       }else{
         console.log("null token");
       }

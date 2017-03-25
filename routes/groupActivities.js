@@ -50,7 +50,7 @@ app.get('/getGroupExists/:group_name',function(req,res){
   app.post('/newRequest',function(req,res){
       verifyToken.verify(req.body.token,function(found){
         if(found != "false") {
-          groupActivity.addNewRequest(found,req.body.group_id,req.body.username,req.body.answer,function(response){
+          groupActivity.addNewRequest(found,req.body.group_id,req.body.username,req.body.answer,io,socketMap,function(response){
             console.log(response);
             res.status(200).json(response);
           });
@@ -119,6 +119,28 @@ app.get('/getGroupExists/:group_name',function(req,res){
     groupActivity.updateGroupPicture(req,function(response){
       res.status(200).json(response);
     });
+  });
 
+  app.get('/pushNotification',function(req,res){
+
+    // io.sockets.emit('notification',{"notification":"this is notification"});
+    if(io.sockets.sockets[socketMap.get("58c457f71fd09234a5913f29")]!=undefined){
+      console.log("shhhhhhhhhhhhhhhhhhhhhh");
+        console.log(io.sockets.sockets[socketMap.get("58c457f71fd09234a5913f29")]);
+        // io.sockets.sockets[socketMap.get("58c457f71fd09234a5913f29")].emit('notification',{"notification":"this is notification"});
+        io.sockets.sockets[socketMap.get("58c457f71fd09234a5913f29")].emit('new_message',{"username":"Shubham","groupname":"lllllll","message":"messaagessdfs"});
+        io.sockets.sockets[socketMap.get("58c457f71fd09234a5913f29")].emit('new_topic',{"group_name":"group_name","topic_name":"topic_name"});
+        io.sockets.sockets[socketMap.get("58c457f71fd09234a5913f29")].emit('on_join_request',{"group_name":"group_name","username":"username","answer":"answerdjfls","groupId":"1234"});
+    }else{
+        console.log("Socket not connected");
+    }
+  //   if(socketMap.get("58c457f71fd09234a5913f29") != undefined){
+  //   // console.log(socketMap.get("58c457f71fd09234a5913f29"));
+  //   // socketMap.get("58c457f71fd09234a5913f29").emit('notification',{"notification":"this is notification"});
+  // }else{
+  //   console.log("socket not connected");
+  // }
+
+    res.status(200).json({"message":"success"});
   });
 }

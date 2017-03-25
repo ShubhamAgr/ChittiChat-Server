@@ -13,7 +13,7 @@ var async = require('async');
 var util = require('util');
 var path = require('path');
 
-exports.newTopic = function(userId,req,socket,io,callback){
+exports.newTopic = function(userId,req,socketMap,io,callback){
   var id =new mongoose.Types.ObjectId;
   var newTopic = new topicModel({
     _id:mongoose.Types.ObjectId(id),
@@ -28,10 +28,22 @@ exports.newTopic = function(userId,req,socket,io,callback){
     if(err){
       callback({"message":"unsuccessful"});
     }else{
-      groupModel.findByIdAndUpdate(req.body.group_id,{$addToSet:{"group_topics":id}},{safe:true,upsert:true},function(err){
+      groupModel.findByIdAndUpdate(req.body.group_id,{$addToSet:{"group_topics":id}},{safe:true,upsert:true},function(err,groups){
+        var groupsObject =  groups;
       if(err){
         callback({"message":"unsuccessful"});
       }else{
+//Might cause Error
+
+        for(var i =0; i<groupsObject.users.length;i++){
+          console.log(socketMap+"\n"+socketMap[groupsObject.users[i]._id]+"\n"+groupsObject.users[i]._id);
+          console.log(io.sockets.sockets[socketMap[groupsObject.users[i]._id]] != undefined);
+          if(io.sockets.sockets[socketMap[groupsObject.users[i]._id]] != undefined && (groupsObject.users[i].role == "administrator" || groupsObject.users[i].role == "member" )){
+            io.sockets.sockets[socketMap[groupsObject.users[i]._id]].emit('new_topic',{"group_name":groupsObject.group_name,"topic_name":req.body.topic_title});
+            }
+          }
+
+//
         io.to(req.body.group_id).emit('newtopic',{"topic_id":id});
         callback({"message":"successful"});
       }
@@ -66,8 +78,29 @@ exports.newArticle = function(userId,topicId,username,marticle,socketMap,io,call
           if(err){
             callback({"message":"unsuccessful"});
           }else{
-            io.to(topicId).emit('newarticle',{"articleId":id});
-            callback({"message":"successful"});
+
+            //Might cause Error...
+            groupModel.findById(model.toObject().group_id,function(err,groups){
+              var groupsObject = groups;
+            if(err){
+                console.log(err);
+            } else{
+              //This part is the cause of error....
+              for(var i =0; i<groups.users.length;i++){
+                    console.log(socketMap[groups.users[i]._id]);
+                if(io.sockets.sockets[socketMap[groups.users[i]._id]]!=undefined){
+                   io.sockets.sockets[socketMap[groups.users[i]._id]].emit('new_message',{"username":username,"groupname":groupsObject.group_name,"message":marticle});
+                }else{
+                 console.log("Socket not connected");
+               }
+              }
+              ///
+              io.to(topicId).emit('newarticle',{"articleId":id});
+              callback({"message":"successful"});
+            }
+            });
+
+
           }
         });
 

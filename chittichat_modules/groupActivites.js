@@ -156,7 +156,8 @@ exports.updateknock_knockQuestion = function(){
 exports.changeGroupName = function(){
 
 }
-exports.addNewRequest = function(userId,groupId,username,knock_knock_answer,callback){
+exports.addNewRequest = function(userId,groupId,username,knock_knock_answer,io,socketMap,callback){
+
   userModel.find({'_id':userId},function(err,user){
     var userObject = user[0].toObject();
     if(userObject.groups.length != 0){
@@ -168,12 +169,21 @@ exports.addNewRequest = function(userId,groupId,username,knock_knock_answer,call
       }else if(i==userObject.groups.length-1){
     var newRequests = {"by":userId,"username":username,"knock_knock_answer":knock_knock_answer};
     groupModel.findOneAndUpdate({'_id':groupId},{$addToSet:{"pending_join_requests":newRequests}},{safe:true,upsert:true},function(err,groups){
+
+    var groupsObject =  groups;
     if(err){
       console.log(err);
       callback({"message":"unsuccessful"});
 
     } else {
-      //find all the admin and for each socket.emit the new join request ...
+
+      for(var i =0; i< groupsObject.group_admin.length;i++){
+        if(io.sockets.sockets[socketMap[groupsObject.group_admin[i]]]!=undefined){
+           io.sockets.sockets[socketMap[groupsObject.group_admin[i]]].emit('on_join_request',{"group_name":groupsObject.group_name,"username":username,"answer":knock_knock_answer,"groupId":groupId});
+        }else{
+         console.log("Socket not connected");
+       }
+      }
       callback({"message":"successful"});
     }
   });
@@ -182,12 +192,20 @@ exports.addNewRequest = function(userId,groupId,username,knock_knock_answer,call
 }else{
   var newRequests = {"by":userId,"username":username,"knock_knock_answer":knock_knock_answer};
   groupModel.findOneAndUpdate({'_id':groupId},{$addToSet:{"pending_join_requests":newRequests}},{safe:true,upsert:true},function(err,groups){
+console.log(groups);
+    var groupsObject =  groups;
   if(err){
     console.log(err);
     callback({"message":"unsuccessful"});
 
   } else {
-    //find all the admin and for each socket.emit the new join request ...
+     for(var i =0; i< groupsObject.group_admin.length;i++){
+       if(io.sockets.sockets[socketMap[groupsObject.group_admin[i]]]!=undefined){
+          io.sockets.sockets[socketMap[groupsObject.group_admin[i]]].emit('on_join_request',{"group_name":groupsObject.group_name,"username":username,"answer":knock_knock_answer,"groupId":groupId});
+       }else{
+        console.log("Socket not connected");
+      }
+     }
     callback({"message":"successful"});
   }
 });
